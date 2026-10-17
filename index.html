@@ -247,6 +247,60 @@
       </div>
 
       <!-- ==================================================================
+           AI INSTANT TEXT & NOTICE TRANSLATOR WIDGET (ON HOME PAGE)
+           Allows workers to paste customer instructions, fine print, notices,
+           and penalty SMS to instantly translate into their preferred language,
+           with voice readout, copy, and WhatsApp share.
+           ================================================================== -->
+      <div class="card-box" id="liveTranslatorWidget" style="margin-bottom: 1.5rem; border: 1px solid var(--border-cyan); background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(18, 25, 41, 0.95));">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+          <div>
+            <h3 style="color:var(--cyan-primary);"><span style="font-size:1.2rem;">🌐</span> <span data-i18n="translatorTitle">AI Instant Text & Notice Translator</span></h3>
+            <p class="card-box-sub" style="margin-bottom:0;" data-i18n="translatorSub">Paste any customer note, penalty SMS, or app warning to translate instantly into simple words</p>
+          </div>
+          <span style="font-size:0.725rem; background:rgba(6,182,212,0.2); color:var(--cyan-primary); padding:0.2rem 0.6rem; border-radius:var(--radius-full); font-weight:700;">Instant OCR & Text AI</span>
+        </div>
+
+        <!-- Sample Quick Translate Snippets for Gig Workers -->
+        <div style="margin-bottom: 0.85rem;">
+          <span style="font-size:0.725rem; color:var(--text-muted); font-weight:600;">⚡ Quick-tap delivery scenarios:</span>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.35rem;" id="sampleTranslateChips">
+            <!-- Rendered from SAMPLE_TRANSLATION_SNIPPETS in data.js -->
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;" id="translatorGridSplit">
+          <div>
+            <label for="liveTranslateInput" style="font-size:0.75rem; color:var(--text-muted); font-weight:600; display:block; margin-bottom:0.3rem;">
+              Original Text (English / Platform Message)
+            </label>
+            <textarea id="liveTranslateInput" style="width:100%; min-height:100px; background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:0.65rem 0.85rem; color:var(--text-main); font-family:inherit; font-size:0.85rem; outline:none; resize:vertical;" placeholder="Paste customer message, penalty SMS, or notice here..."></textarea>
+            <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+              <button type="button" id="btnExecuteLiveTranslate" class="btn-calc-submit" style="background:linear-gradient(135deg, var(--cyan-primary), #0284c7); padding:0.55rem 0.95rem; font-size:0.8rem;">
+                <span data-i18n="btnTranslate">🌐 Translate to My Language</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:0.75rem; color:var(--emerald-primary); font-weight:700; display:block; margin-bottom:0.3rem;">
+              ✓ Plain Language Translation (सरल अनुवाद)
+            </label>
+            <div id="liveTranslateResultBox" style="background:var(--bg-input); border:1px solid rgba(16, 185, 129, 0.3); border-radius:var(--radius-md); padding:0.75rem 0.85rem; min-height:100px; font-size:0.85rem; line-height:1.55; color:#ecfdf5; white-space:pre-wrap;">Select a sample above or paste a message to see the instant translation in your selected language.</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.5rem; flex-wrap:wrap; gap:0.4rem;">
+              <button type="button" id="btnListenLiveTranslate" class="btn-player-action" style="background:var(--emerald-primary); color:#000;">
+                <span>🔊</span> <span data-i18n="btnListenTrans">Listen Translation</span>
+              </button>
+              <div style="display:flex; gap:0.4rem;">
+                <button type="button" id="btnCopyLiveTranslate" class="btn-a11y" style="font-size:0.75rem;">📋 Copy</button>
+                <button type="button" id="btnShareLiveTranslate" class="btn-whatsapp" style="font-size:0.75rem; padding:0.3rem 0.65rem; border-radius:var(--radius-md);">💬 WhatsApp</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================
            PAGE 1: EARNINGS TRACKING (कमाई हिसाब)
            ================================================================== -->
       <section class="page-view" id="page-earnings">

@@ -82,8 +82,8 @@ const WORKERS_LIST = [
     avatar: "⚡",
     lang: "en",
     todayGross: 1120,
-    fuelCost: 45, // EV charging
-    deductions: 250, // Cancellation penalty
+    fuelCost: 45,
+    deductions: 250,
     hoursWorked: 8.0,
     activeDisputes: 1
   },
@@ -99,7 +99,7 @@ const WORKERS_LIST = [
     lang: "gu",
     todayGross: 1600,
     fuelCost: 190,
-    deductions: 320, // Platform commission
+    deductions: 320,
     hoursWorked: 8.0,
     activeDisputes: 0
   },
@@ -313,13 +313,37 @@ const WELFARE_SCHEMES = [
   }
 ];
 
-// Multilingual Interface Dictionaries
+// Pre-configured Sample Messages for Instant Translation Feature
+const SAMPLE_TRANSLATION_SNIPPETS = [
+  {
+    id: "trans-1",
+    label: "Customer Delivery Gate Note",
+    sourceText: "Please leave package behind shoe rack at flat 402. Do not ring doorbell as baby is sleeping. Beware of pet dog."
+  },
+  {
+    id: "trans-2",
+    label: "Platform Penalty Deduction Alert",
+    sourceText: "Order #8812 was unassigned due to merchant delay. A penalty of ₹150 has been provisionally deducted from your daily wallet."
+  },
+  {
+    id: "trans-3",
+    label: "Account Deactivation Warning Notice",
+    sourceText: "Your account is flagged for document compliance. Please re-upload valid driving license and vehicle registration within 48 hours to avoid permanent suspension."
+  },
+  {
+    id: "trans-4",
+    label: "Customer Route Change Message",
+    sourceText: "I am not at the location. Please bring the delivery to Block C, 4th floor. Lift is not working, take stairs."
+  }
+];
+
+// Comprehensive Multilingual Interface Dictionaries
 const TRANSLATIONS = {
   en: {
     appTitle: "GigSaathi AI",
     appSub: "GenAI Guardian for Gig & Informal Workers",
-    readPageBtn: "🔊 Listen to Page",
-    stopAudioBtn: "⏹ Stop Audio",
+    readPageBtn: "Listen to Page",
+    stopAudioBtn: "Stop Audio",
     navEarnings: "Earnings Tracking",
     navSafety: "Safety Practices",
     navWelfare: "Rights & Welfare",
@@ -342,13 +366,20 @@ const TRANSLATIONS = {
     grievanceSub: "Generate high-impact appeal letters for unfair deactivation, penalty deductions, and disputes",
     copyDraftBtn: "📋 Copy Text",
     sendWhatsappBtn: "💬 Send via WhatsApp",
+    translatorTitle: "AI Instant Text & Notice Translator",
+    translatorSub: "Paste any customer note, penalty SMS, or app warning to translate instantly into simple words",
+    translatorPlaceholder: "Paste any English/customer message, SMS, or notice here...",
+    btnTranslate: "🌐 Translate to My Language",
+    btnListenTrans: "🔊 Listen Translation",
+    recentShifts: "Recent Shifts History",
+    logShift: "Log Today's Shift & Real Expenses",
     speechLangCode: "en-US"
   },
   hi: {
     appTitle: "गिग साथी AI",
     appSub: "गिग और दैनिक वेतन कामगारों का AI साथी",
-    readPageBtn: "🔊 यह पेज सुनें (बोलकर)",
-    stopAudioBtn: "⏹ आवाज़ रोकें",
+    readPageBtn: "यह पेज सुनें (बोलकर)",
+    stopAudioBtn: "आवाज़ रोकें",
     navEarnings: "कमाई हिसाब",
     navSafety: "सुरक्षा नियम",
     navWelfare: "हक और सरकारी योजनाएँ",
@@ -371,13 +402,20 @@ const TRANSLATIONS = {
     grievanceSub: "गलत आईडी ब्लॉक, अनुचित कटौती या ग्राहक विवाद के खिलाफ 1-क्लिक में पत्र तैयार करें",
     copyDraftBtn: "📋 टेक्स्ट कॉपी करें",
     sendWhatsappBtn: "💬 व्हाट्सएप पर भेजें",
+    translatorTitle: "AI तुरंत संदेश व नोटिस अनुवादक",
+    translatorSub: "कस्टमर के अंग्रेजी मैसेज, पेनाल्टी SMS या ऐप नोटिस का तुरंत आसान भाषा में अनुवाद करें",
+    translatorPlaceholder: "यहाँ कोई भी अंग्रेजी मैसेज, कस्टमर नोट या चालान टेक्स्ट पेस्ट करें...",
+    btnTranslate: "🌐 मेरी भाषा में अनुवाद करें",
+    btnListenTrans: "🔊 बोलकर सुनें",
+    recentShifts: "हालिया शिफ्ट इतिहास",
+    logShift: "आज की कमाई व खर्च दर्ज करें",
     speechLangCode: "hi-IN"
   },
   hinglish: {
     appTitle: "GigSaathi AI",
     appSub: "Gig & Daily Wage Workers ka AI Guardian",
-    readPageBtn: "🔊 Yeh Page Suniye (Voice)",
-    stopAudioBtn: "⏹ Voice Band Karein",
+    readPageBtn: "Yeh Page Suniye (Voice)",
+    stopAudioBtn: "Voice Band Karein",
     navEarnings: "Kamai Hisaab",
     navSafety: "Safety Practices",
     navWelfare: "Haq Aur Schemes",
@@ -400,13 +438,20 @@ const TRANSLATIONS = {
     grievanceSub: "ID deactivation aur cut payout ke khilaaf strong appeal draft banayein",
     copyDraftBtn: "📋 Copy Karein",
     sendWhatsappBtn: "💬 WhatsApp pe Bhejein",
+    translatorTitle: "AI Message & Notice Translator",
+    translatorSub: "Customer ke English message ya company ke notice ka instant plain translation",
+    translatorPlaceholder: "Yahan koi bhi customer note ya penalty SMS paste karein...",
+    btnTranslate: "🌐 Hindi/Hinglish me Translate",
+    btnListenTrans: "🔊 Voice me Suniye",
+    recentShifts: "Recent Shifts Record",
+    logShift: "Aaj Ka Hisaab Aur Kharcha",
     speechLangCode: "hi-IN"
   },
   ta: {
     appTitle: "கிக் சாதி AI",
     appSub: "கிக் & தினக்கூலி தொழிலாளர்களின் AI வழிகாட்டி",
-    readPageBtn: "🔊 இந்தப் பக்கத்தைக் கேளுங்கள்",
-    stopAudioBtn: "⏹ ஆடியோவை நிறுத்து",
+    readPageBtn: "இந்தப் பக்கத்தைக் கேளுங்கள்",
+    stopAudioBtn: "ஆடியோவை நிறுத்து",
     navEarnings: "வருமானக் கணக்கு",
     navSafety: "பாதுகாப்பு முறைகள்",
     navWelfare: "உரிமைகள் & நலத்திட்டங்கள்",
@@ -429,13 +474,20 @@ const TRANSLATIONS = {
     grievanceSub: "தவறான கணக்கு முடக்கம் மற்றும் பிடித்தங்களுக்கு எதிரான மனு",
     copyDraftBtn: "📋 நகலெடு",
     sendWhatsappBtn: "💬 வாட்ஸ்அப்பில் அனுப்பு",
+    translatorTitle: "AI உடனடி செய்தி மொழிபெயர்ப்பாளர்",
+    translatorSub: "வாடிக்கையாளர் செய்திகள் மற்றும் நிறுவன நோட்டீஸ்களை எளிய தமிழில் மொழிபெயர்க்கவும்",
+    translatorPlaceholder: "வாடிக்கையாளர் செய்தி அல்லது அபராத அறிவிப்பை இங்கே ஒட்டவும்...",
+    btnTranslate: "🌐 தமிழில் மொழிபெயர்க்க",
+    btnListenTrans: "🔊 குரலில் கேளுங்கள்",
+    recentShifts: "சமீபத்திய ஷிப்ட் வரலாறு",
+    logShift: "இன்றைய வருமானம் மற்றும் செலவு",
     speechLangCode: "ta-IN"
   },
   te: {
     appTitle: "గిగ్ సాథీ AI",
     appSub: "గిగ్ & రోజువారీ వేతన కార్మికుల AI సహచరుడు",
-    readPageBtn: "🔊 ఈ పేజీని వినండి",
-    stopAudioBtn: "⏹ ఆడియోను ఆపండి",
+    readPageBtn: "ఈ పేజీని వినండి",
+    stopAudioBtn: "ఆడియోను ఆపండి",
     navEarnings: "ఆదాయ లెక్కలు",
     navSafety: "భద్రతా పద్ధతులు",
     navWelfare: "హక్కులు & సంక్షేమ పథకాలు",
@@ -458,13 +510,20 @@ const TRANSLATIONS = {
     grievanceSub: "అన్యాయమైన ఐడి రద్దు లేదా కోతలపై అప్పీల్ రూపొందించండి",
     copyDraftBtn: "📋 కాపీ చేయండి",
     sendWhatsappBtn: "💬 వాట్సాప్‌లో పంపండి",
+    translatorTitle: "AI తక్షణ సందేశ అనువాదకుడు",
+    translatorSub: "కస్టమర్ సందేశాలు లేదా నోటీసులను సులభమైన తెలుగులో అనువదించండి",
+    translatorPlaceholder: "ఇక్కడ సందేశం లేదా నోటీసును అతికించండి...",
+    btnTranslate: "🌐 తెలుగులోకి అనువదించండి",
+    btnListenTrans: "🔊 వాయిస్‌లో వినండి",
+    recentShifts: "ఇటీవలి షిఫ్ట్ రికార్డు",
+    logShift: "నేటి ఆదాయం & ఖర్చులు నమోదు చేయండి",
     speechLangCode: "te-IN"
   },
   bn: {
     appTitle: "গিগ সাথী AI",
     appSub: "গিগ ও দৈনিক মজুরি কর্মীদের এআই সহায়ক",
-    readPageBtn: "🔊 এই পৃষ্ঠাটি শুনুন",
-    stopAudioBtn: "⏹ অডিও বন্ধ করুন",
+    readPageBtn: "এই পৃষ্ঠাটি শুনুন",
+    stopAudioBtn: "অডিও বন্ধ করুন",
     navEarnings: "উপার্জন হিসাব",
     navSafety: "নিরাপত্তা নিয়ম",
     navWelfare: "অধিকার ও প্রকল্প",
@@ -487,13 +546,20 @@ const TRANSLATIONS = {
     grievanceSub: "আইডি ব্লক ও কাটা টাকার বিরুদ্ধে শক্তিশালী আবেদন তৈরি করুন",
     copyDraftBtn: "📋 কপি করুন",
     sendWhatsappBtn: "💬 হোয়াটসঅ্যাপে পাঠান",
+    translatorTitle: "AI বার্তা ও নোটিশ অনুবাদক",
+    translatorSub: "গ্রাহকের বার্তা বা জরিমানা নোটিশ সহজ বাংলায় অনুবাদ করুন",
+    translatorPlaceholder: "এখানে যেকোনো নোটিশ বা মেসেজ পেস্ট করুন...",
+    btnTranslate: "🌐 বাংলায় অনুবাদ করুন",
+    btnListenTrans: "🔊 শুনে নিন",
+    recentShifts: "সাম্প্রতিক কাজের ইতিহাস",
+    logShift: "আজকের আয় ও ব্যয় নথিভুক্ত করুন",
     speechLangCode: "bn-IN"
   },
   mr: {
     appTitle: "गिग साथी AI",
     appSub: "गिग व रोजंदारी कामगारांचा AI मार्गदर्शक",
-    readPageBtn: "🔊 हे पान ऐका (ध्वनी)",
-    stopAudioBtn: "⏹ आवाज थांबवा",
+    readPageBtn: "हे पान ऐका (ध्वनी)",
+    stopAudioBtn: "आवाज थांबवा",
     navEarnings: "कमाईचा हिशोब",
     navSafety: "सुरक्षा नियम",
     navWelfare: "हक्क आणि कल्याणकारी योजना",
@@ -516,13 +582,20 @@ const TRANSLATIONS = {
     grievanceSub: "आयडी ब्लॉक व चुकीच्या कपातीविरोधात अधिकृत पत्र तयार करा",
     copyDraftBtn: "📋 कॉपी करा",
     sendWhatsappBtn: "💬 व्हॉट्सॲपवर पाठवा",
+    translatorTitle: "AI संदेश व सूचना अनुवादक",
+    translatorSub: "ग्राहक संदेश किंवा कंपनीच्या दंडात्मक नोटीसचे सोप्या मराठीत भाषांतर करा",
+    translatorPlaceholder: "येथे कोणताही इंग्रजी संदेश किंवा नोटीस पेस्ट करा...",
+    btnTranslate: "🌐 मराठीत भाषांतर करा",
+    btnListenTrans: "🔊 आवाजात ऐका",
+    recentShifts: "अलीकडील शिफ्ट इतिहास",
+    logShift: "आजची कमाई व खर्च नोंदवा",
     speechLangCode: "mr-IN"
   },
   kn: {
     appTitle: "ಗಿಗ್ ಸಾಥಿ AI",
     appSub: "ಗಿಗ್ ಮತ್ತು ದಿನಗೂಲಿ ಕಾರ್ಮಿಕರ AI ಸಹಾಯಕ",
-    readPageBtn: "🔊 ಈ ಪುಟವನ್ನು ಆಲಿಸಿ",
-    stopAudioBtn: "⏹ ಆಡಿಯೋ ನಿಲ್ಲಿಸಿ",
+    readPageBtn: "ಈ ಪುಟವನ್ನು ಆಲಿಸಿ",
+    stopAudioBtn: "ಆಡಿಯೋ ನಿಲ್ಲಿಸಿ",
     navEarnings: "ಗಳಿಕೆಯ ಲೆಕ್ಕಾಚಾರ",
     navSafety: "ಸುರಕ್ಷತಾ ಕ್ರಮಗಳು",
     navWelfare: "ಹಕ್ಕುಗಳು ಮತ್ತು ಯೋಜನೆಗಳು",
@@ -545,13 +618,20 @@ const TRANSLATIONS = {
     grievanceSub: "ತಪ್ಪಾದ ಐಡಿ ಅಮಾನತು ವಿರುದ್ಧ ಅಧಿಕೃತ ಮೇಲ್ಮನವಿ ಸಿದ್ಧಪಡಿಸಿ",
     copyDraftBtn: "📋 ನಕಲಿಸಿ",
     sendWhatsappBtn: "💬 ವಾಟ್ಸಾಪ್ ಮೂಲಕ ಕಳುಹಿಸಿ",
+    translatorTitle: "AI ಸಂದೇಶ ಅನುವಾದಕ",
+    translatorSub: "ಗ್ರಾಹಕರ ಟಿಪ್ಪಣಿಗಳು ಮತ್ತು ಕಂಪನಿ ನೋಟಿಸ್‌ಗಳನ್ನು ಸರಳ ಕನ್ನಡಕ್ಕೆ ಅನುವಾದಿಸಿ",
+    translatorPlaceholder: "ಇಲ್ಲಿ ಸಂದೇಶ ಅಥವಾ ನೋಟಿಸ್ ಪೇಸ್ಟ್ ಮಾಡಿ...",
+    btnTranslate: "🌐 ಕನ್ನಡಕ್ಕೆ ಅನುವಾದಿಸಿ",
+    btnListenTrans: "🔊 ಧ್ವನಿಯಲ್ಲಿ ಆಲಿಸಿ",
+    recentShifts: "ಇತ್ತೀಚಿನ ಕೆಲಸದ ಇತಿಹಾಸ",
+    logShift: "ಇಂದಿನ ಗಳಿಕೆ ಮತ್ತು ಖರ್ಚುಗಳನ್ನು ದಾಖಲಿಸಿ",
     speechLangCode: "kn-IN"
   },
   gu: {
     appTitle: "ગિગ સાથી AI",
     appSub: "ગિગ અને દૈનિક વેતન શ્રમિકોનો AI સાથી",
-    readPageBtn: "🔊 આ પેજ સાંભળો",
-    stopAudioBtn: "⏹ અવાજ બંધ કરો",
+    readPageBtn: "આ પેજ સાંભળો",
+    stopAudioBtn: "અવાજ બંધ કરો",
     navEarnings: "કમાણી હિસાબ",
     navSafety: "સુરક્ષા નિયમો",
     navWelfare: "હકો અને સરકારી યોજનાઓ",
@@ -574,6 +654,13 @@ const TRANSLATIONS = {
     grievanceSub: "ખોટા આઈડી બ્લોક અથવા કપાત સામે મજબૂત અરજી બનાવો",
     copyDraftBtn: "📋 કૉપિ કરો",
     sendWhatsappBtn: "💬 વ્હોટ્સએપ પર મોકલો",
+    translatorTitle: "AI સંદેશ અને નોટિસ અનુવાદક",
+    translatorSub: "ગ્રાહકના અંગ્રેજી સંદેશ અથવા દંડની નોટિસનો સરળ ગુજરાતીમાં અનુવાદ કરો",
+    translatorPlaceholder: "અહીં કોઈપણ અંગ્રેજી સંદેશ અથવા નોટિસ પેસ્ટ કરો...",
+    btnTranslate: "🌐 ગુજરાતીમાં અનુવાદ કરો",
+    btnListenTrans: "🔊 અવાજમાં સાંભળો",
+    recentShifts: "તાજેતરનો શિફ્ટ ઇતિહાસ",
+    logShift: "આજની કમાણી અને ખર્ચ નોંધો",
     speechLangCode: "gu-IN"
   }
 };

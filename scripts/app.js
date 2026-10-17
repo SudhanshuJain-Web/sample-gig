@@ -21,6 +21,7 @@ class GigSaathiApp {
     this.setupSpeechListeners();
     this.setupLanguageSelector();
     this.setupAccessibility();
+    this.setupLiveTranslator();
     this.setupEarningsPage();
     this.setupSafetyPage();
     this.setupWelfarePage();
@@ -327,7 +328,85 @@ class GigSaathiApp {
       this.generateCurrentGrievanceDraft();
     }
 
+    // Refresh live translator widget in new language if it contains text
+    this.executeLiveTranslation(false);
+
     this.showToast(`Language translated to: ${this.getLangDisplayName(langCode)}`);
+  }
+
+  // --- AI INSTANT TEXT & NOTICE TRANSLATOR WIDGET ---
+  setupLiveTranslator() {
+    const chipsContainer = document.getElementById("sampleTranslateChips");
+    const inputArea = document.getElementById("liveTranslateInput");
+    const translateBtn = document.getElementById("btnExecuteLiveTranslate");
+    const listenBtn = document.getElementById("btnListenLiveTranslate");
+    const copyBtn = document.getElementById("btnCopyLiveTranslate");
+    const shareBtn = document.getElementById("btnShareLiveTranslate");
+
+    if (!chipsContainer || !inputArea) return;
+
+    // Populate delivery sample chips
+    chipsContainer.innerHTML = "";
+    SAMPLE_TRANSLATION_SNIPPETS.forEach((snippet, idx) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = `translate-chip-btn ${idx === 0 ? "active" : ""}`;
+      chip.textContent = snippet.label;
+      chip.title = snippet.sourceText;
+      chip.addEventListener("click", () => {
+        chipsContainer.querySelectorAll(".translate-chip-btn").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        inputArea.value = snippet.sourceText;
+        this.executeLiveTranslation(false);
+      });
+      chipsContainer.appendChild(chip);
+    });
+
+    // Default first sample
+    inputArea.value = SAMPLE_TRANSLATION_SNIPPETS[0].sourceText;
+    this.executeLiveTranslation(false);
+
+    translateBtn.addEventListener("click", () => {
+      this.executeLiveTranslation(false);
+      this.showToast("Message translated!");
+    });
+
+    listenBtn.addEventListener("click", () => {
+      const resultText = document.getElementById("liveTranslateResultBox").innerText;
+      if (resultText) {
+        voiceEngine.speak(resultText, this.currentLang);
+      }
+    });
+
+    copyBtn.addEventListener("click", () => {
+      const resultText = document.getElementById("liveTranslateResultBox").innerText;
+      navigator.clipboard.writeText(resultText);
+      this.showToast("Translation copied to clipboard!");
+    });
+
+    shareBtn.addEventListener("click", () => {
+      const resultText = document.getElementById("liveTranslateResultBox").innerText;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(resultText)}`, "_blank");
+    });
+  }
+
+  executeLiveTranslation(shouldSpeak = false) {
+    const inputArea = document.getElementById("liveTranslateInput");
+    const resultBox = document.getElementById("liveTranslateResultBox");
+    if (!inputArea || !resultBox) return;
+
+    const sourceText = inputArea.value.trim();
+    if (!sourceText) {
+      resultBox.textContent = "Select a sample above or paste a message to see the instant translation in your selected language.";
+      return;
+    }
+
+    const result = aiEngine.translateLiveText(sourceText, this.currentLang);
+    resultBox.innerHTML = `<strong>${result.keyInstruction}</strong>\n\n${result.translated}`;
+
+    if (shouldSpeak) {
+      voiceEngine.speak(result.translated, this.currentLang);
+    }
   }
 
   getLangDisplayName(code) {

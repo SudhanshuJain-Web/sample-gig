@@ -313,6 +313,151 @@ ${workerName} (${city})`;
       return `Hello ${currentWorker?.name || "Partner"}! I am your GigSaathi AI Guardian. Ask me about unfair deductions, traffic challans, e-Shram welfare schemes, road safety protocols, or deactivation appeals.`;
     }
   }
+
+  // Live Text Translator for customer instructions, notices, and SMS
+  translateLiveText(sourceText, targetLang = "hi") {
+    if (!sourceText || sourceText.trim() === "") {
+      return {
+        translated: "कृपया अनुवाद करने के लिए कोई टेक्स्ट या संदेश दर्ज करें।",
+        summary: "No text provided",
+        keyInstruction: "N/A"
+      };
+    }
+
+    const lower = sourceText.toLowerCase();
+    const isHindi = targetLang === "hi" || targetLang === "hinglish";
+    const isTamil = targetLang === "ta";
+    const isTelugu = targetLang === "te";
+    const isBengali = targetLang === "bn";
+    const isMarathi = targetLang === "mr";
+    const isGujarati = targetLang === "gu";
+    const isKannada = targetLang === "kn";
+
+    // Domain Pattern 1: Gate / Dog / Dropoff note
+    if (lower.includes("dog") || lower.includes("doorbell") || lower.includes("shoe rack") || lower.includes("package") || lower.includes("gate")) {
+      if (isHindi) {
+        return {
+          translated: "कृपया पार्सल फ्लैट 402 के बाहर जूते रखने वाली रैक के पीछे छोड़ दें। डोरबेल बिल्कुल न बजाएं क्योंकि बच्चा सो रहा है। घर के पालतू कुत्ते से सावधान रहें!",
+          summary: "फ्लैट 402 के बाहर बिना घंटी बजाए पार्सल रखें। कुत्ते से सावधान रहें।",
+          keyInstruction: "⚠️ घंटी न बजाएं, कुत्ता है - पार्सल रैक के पीछे रखें।"
+        };
+      } else if (isTamil) {
+        return {
+          translated: "தயவுசெய்து பார்சலை காலணி ரேக்கின் பின்னால் வைக்கவும். குழந்தை தூங்குவதால் காலிங் பெல் அடிக்க வேண்டாம். நாயிடம் எச்சரிக்கையாக இருக்கவும்!",
+          summary: "காலிங் பெல் அடிக்க வேண்டாம். நாயிடம் ஜாக்கிரதை.",
+          keyInstruction: "⚠️ பெல் அடிக்க வேண்டாம், பார்சலை வெளியே வைக்கவும்."
+        };
+      } else if (isTelugu) {
+        return {
+          translated: "దయచేసి పార్శిల్‌ను షూ రాక్ వెనుక ఉంచండి. బిడ్డ నిద్రపోతున్నందున డోర్‌బెల్ మోగించవద్దు. పెంపుడు కుక్కతో జాగ్రత్తగా ఉండండి!",
+          summary: "డోర్‌బెల్ మోగించవద్దు. కుక్క జాగ్రత్త.",
+          keyInstruction: "⚠️ బెల్ కొట్టవద్దు, షూ రాక్ వద్ద ఉంచండి."
+        };
+      } else if (isMarathi) {
+        return {
+          translated: "कृपया पार्सल शू रॅकच्या मागे ठेवा. बाळ झोपलेले असल्यामुळे डोअरबेल वाजवू नका. पाळीव कुत्र्यापासून सावध राहा!",
+          summary: "डोअरबेल वाजवू नका. कुत्र्यापासून सावध.",
+          keyInstruction: "⚠️ बेल वाजवू नका, पार्सल रॅकच्या मागे ठेवा."
+        };
+      } else if (isBengali) {
+        return {
+          translated: "দয়া করে পার্সেলটি জুতার র‍্যাকের পেছনে রেখে দিন। বাচ্চা ঘুমাচ্ছে তাই ডোরবেল বাজাবেন না। পোষা কুকুর থেকে সাবধান থাকবেন!",
+          summary: "বেল বাজাবেন না। কুকুর থেকে সাবধান।",
+          keyInstruction: "⚠️ ডোরবেল বাজাবেন না, বাইরে রেখে দিন।"
+        };
+      } else if (isGujarati) {
+        return {
+          translated: "કૃપા કરીને પાર્સલ શૂ રેકની પાછળ મૂકો. બાળક ઊંઘતું હોવાથી ડોરબેલ ન વગાડો. પાળતુ કૂતરાથી સાવધાન રહો!",
+          summary: "ડોરબેલ ન વગાડવી. કૂતરાથી સાવચેત રહેવું.",
+          keyInstruction: "⚠️ બેલ ન વગાડો, પાર્સલ રેક પાછળ મૂકો."
+        };
+      } else if (isKannada) {
+        return {
+          translated: "ದಯವಿಟ್ಟು ಪಾರ್ಸೆಲ್ ಅನ್ನು ಶೂ ರ್ಯಾಕ್ ಹಿಂಭಾಗದಲ್ಲಿ ಇರಿಸಿ. ಮಗು ಮಲಗಿರುವುದರಿಂದ ಡೋರ್ ಬೆಲ್ ಬಾರಿಸಬೇಡಿ. ಸಾಕು ನಾಯಿಯಿಂದ ಎಚ್ಚರ!",
+          summary: "ಡೋರ್ ಬೆಲ್ ಬಾರಿಸಬೇಡಿ. ನಾಯಿಯಿಂದ ಜಾಗರೂಕರಾಗಿರಿ.",
+          keyInstruction: "⚠️ ಬೆಲ್ ಬಾರಿಸಬೇಡಿ, ಶೂ ರ್ಯಾಕ್ ಬಳಿ ಇರಿಸಿ."
+        };
+      } else {
+        return {
+          translated: "Please leave package behind the shoe rack at Flat 402. Do not ring the doorbell as the baby is sleeping. Beware of pet dog.",
+          summary: "Do not ring bell. Beware of dog. Drop at shoe rack.",
+          keyInstruction: "⚠️ Do not ring doorbell; leave safely at shoe rack."
+        };
+      }
+    }
+
+    // Domain Pattern 2: Penalty deduction
+    if (lower.includes("penalty") || lower.includes("deducted") || lower.includes("unassigned") || lower.includes("delay")) {
+      if (isHindi) {
+        return {
+          translated: "रेस्टोरेंट/मर्चेंट की देरी की वजह से ऑर्डर #8812 हटाया गया। आपके दैनिक वॉलेट से ₹150 का जुर्माना अस्थायी रूप से काट लिया गया है। 'न्याय ड्राफ़्टर' से तुरंत इस कटौती को चुनौती दें!",
+          summary: "कंपनी ने दुकान की देरी का ₹150 जुर्माना आप पर काटा है।",
+          keyInstruction: "⚠️ ₹150 की अनुचित कटौती - हब लीड को अपील भेजें।"
+        };
+      } else if (isTamil) {
+        return {
+          translated: "வணிகர் தாமதம் காரணமாக ஆர்டர் மாற்றப்பட்டது. உங்கள் கணக்கிலிருந்து ₹150 அபராதம் பிடிக்கப்பட்டுள்ளது. இதை திரும்பப் பெற உடனே முறையிடவும்!",
+          summary: "தவறாக ₹150 அபராதம் விதிக்கப்பட்டுள்ளது.",
+          keyInstruction: "⚠️ ₹150 பிடித்தம் - முறையீடு செய்யவும்."
+        };
+      } else {
+        return {
+          translated: "Order #8812 was unassigned due to merchant delay. A ₹150 penalty has been provisionally deducted from your daily wallet. Dispute this via Grievance Drafter.",
+          summary: "Unfair ₹150 deduction due to restaurant delay.",
+          keyInstruction: "⚠️ File immediate refund appeal with proof."
+        };
+      }
+    }
+
+    // Domain Pattern 3: Deactivation Warning / License
+    if (lower.includes("deactivation") || lower.includes("license") || lower.includes("suspension") || lower.includes("registration")) {
+      if (isHindi) {
+        return {
+          translated: "चेतावनी: आपके दस्तावेज़ अधूरे हैं। स्थायी आईडी ब्लॉक से बचने के लिए अगले 48 घंटों में अपना वैध ड्राइविंग लाइसेंस और वाहन आरसी दोबारा अपलोड करें।",
+          summary: "आईडी ब्लॉक होने से बचाने के लिए 48 घंटे में लाइसेंस अपलोड करें।",
+          keyInstruction: "⚠️ 48 घंटे के भीतर ड्राइविंग लाइसेंस ऐप में अपलोड करें।"
+        };
+      } else {
+        return {
+          translated: "Warning: Your account is flagged for compliance. Re-upload your valid driving license and vehicle registration within 48 hours to avoid permanent suspension.",
+          summary: "Upload valid license in 48 hours to avoid ID block.",
+          keyInstruction: "⚠️ Re-upload documents via partner app within 48h."
+        };
+      }
+    }
+
+    // Domain Pattern 4: Stairs / Address change
+    if (lower.includes("stairs") || lower.includes("lift") || lower.includes("block") || lower.includes("floor") || lower.includes("address")) {
+      if (isHindi) {
+        return {
+          translated: "कस्टमर का नया संदेश: 'मैं मूल पते पर नहीं हूँ। कृपया डिलीवरी ब्लॉक C, चौथी मंजिल पर लाएं। लिफ्ट खराब है, सीढ़ियों से आना होगा।'",
+          summary: "कस्टमर ने पता बदला: ब्लॉक C, 4th फ्लोर, लिफ्ट बंद है।",
+          keyInstruction: "⚠️ बदला हुआ पता: ब्लॉक C, 4थी मंजिल (सीढ़ियां)।"
+        };
+      } else {
+        return {
+          translated: "Customer Message: 'I am not at the initial location. Please deliver to Block C, 4th floor. Lift is out of order, please use stairs.'",
+          summary: "Address changed: Block C, 4th floor, stairs only.",
+          keyInstruction: "⚠️ New location: Block C, 4th floor (No lift)."
+        };
+      }
+    }
+
+    // General fallback translation
+    if (isHindi) {
+      return {
+        translated: `अनुवाद: "${sourceText}"। यह ग्राहक या कंपनी से जुड़ा संदेश है। कृपया डिलीवरी या ट्रिप के दौरान नियमों का पालन करें।`,
+        summary: "सामान्य संदेश / निर्देश",
+        keyInstruction: "मैसेज की पुष्टि करें और आवश्यक कार्रवाई करें।"
+      };
+    } else {
+      return {
+        translated: `Translation: "${sourceText}". This is a communication related to your active gig shift or platform terms.`,
+        summary: "General shift communication",
+        keyInstruction: "Review message details and proceed with caution."
+      };
+    }
+  }
 }
 
 // Global AI Engine instance

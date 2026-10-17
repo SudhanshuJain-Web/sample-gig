@@ -1849,3 +1849,9 @@ body {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
+
+@media (max-width: 820px) {
+  #translatorGridSplit {
+    grid-template-columns: 1fr !important;
+  }
+}
