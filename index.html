@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GigSaathi AI (गिग साथी) — GenAI Assistant for Gig & Informal Workers</title>
+  <meta name="description" content="AI-powered multilingual assistant for delivery riders, drivers, and daily wage workers. Features earnings tracking, safety practices, welfare schemes, document simplification, and dispute drafting.">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       AUTHENTICATION OVERLAY (MAX 10 WORKERS QUOTA ENFORCED)
+       ====================================================================== -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-modal">
+      <div class="auth-hero-side">
+        <div class="auth-hero-content">
+          <div class="auth-badge-logo">🛡️</div>
+          <h2 class="auth-hero-title">GigSaathi AI<br><span style="color:var(--amber-primary)">गिग साथी</span></h2>
+          <p class="auth-hero-sub">The GenAI Co-pilot for Gig & Daily-Wage Workers</p>
+          <ul class="auth-features-list">
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Real Net Wage & Fuel Tracking</li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 24/7 Field Safety & One-Touch SOS</li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> e-Shram & Government Welfare Schemes</li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Plain-Language Pay Slip & Challan Decrypter</li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 1-Click WhatsApp Dispute Appeal Drafter</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="auth-form-side">
+        <div class="auth-header">
+          <div class="worker-quota-badge" data-i18n="quotaLabel">Active Workers: 10 / 10 Max</div>
+          <h3 data-i18n="loginHeading">Worker Sign-In Portal</h3>
+          <p data-i18n="loginSub">Select your profile or enter phone to access your personalized GenAI Co-pilot</p>
+        </div>
+
+        <div class="quick-users-label">
+          <span>⚡ Select 1-Click Registered Worker:</span>
+          <span style="color:var(--amber-primary); font-size:0.7rem;">(10 Profiles Loaded)</span>
+        </div>
+
+        <!-- 10 Pre-registered Workers Grid -->
+        <div class="quick-users-grid" id="quickUsersGrid">
+          <!-- Dynamically populated from data.js -->
+        </div>
+
+        <div class="auth-divider">
+          <span>OR SIGN IN WITH PHONE</span>
+        </div>
+
+        <form class="custom-auth-form" id="customLoginForm">
+          <div class="auth-input-group">
+            <label for="loginName">Full Name</label>
+            <input type="text" id="loginName" class="auth-input" placeholder="e.g. Raju Kumar">
+          </div>
+          <div class="auth-input-group">
+            <label for="loginPhone">Mobile Number (Registered)</label>
+            <input type="tel" id="loginPhone" class="auth-input" placeholder="e.g. 9876543210" required>
+          </div>
+          <div class="auth-input-group">
+            <label for="loginRole">Primary Occupation</label>
+            <select id="loginRole" class="auth-input">
+              <option value="Pick & Drop Partner">Pick & Drop Delivery Partner (Zomato/Swiggy/Zepto)</option>
+              <option value="Auto-Rickshaw & Cab Driver">Auto-Rickshaw & Cab Driver (Uber/Ola/Rapido)</option>
+              <option value="Daily Wage Laborer">Daily Wage Laborer & Helper</option>
+              <option value="Skilled Technician">Skilled Technician (Electrician/Plumber)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-auth-submit">Enter AI Assistant</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MAIN APPLICATION WRAPPER
+       ====================================================================== -->
+  <div class="app-wrapper">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="brand-wrap">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <h1 class="brand-name">GigSaathi <span style="color:var(--amber-primary)">AI</span></h1>
+          <p class="brand-sub">गिग और दैनिक वेतन कामगारों का AI रक्षक</p>
+        </div>
+      </div>
+
+      <div class="header-tools">
+        <!-- Translate Text Option: Multilingual Dropdown -->
+        <div class="lang-picker-box">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.148 2.01 1 1 0 11-.892-1.79 17.097 17.097 0 002.828-1.782A16.89 16.89 0 014.28 6H3a1 1 0 010-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.875.875 0 01-.02.875 1 1 0 01-.894.553.978.978 0 01-.894-.553L14.61 14h-3.22l-.467 1.41a1 1 0 01-.95.688.98.98 0 01-.945-1.312l2.972-5.945A1 1 0 0113 8zm-.12 4.4h1.24l-.62-1.86-.62 1.86z" clip-rule="evenodd"></path></svg>
+          <select id="globalLangPicker" class="lang-select-input" title="Translate page text into selected language">
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="en">English</option>
+            <option value="hinglish">Hinglish</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+          </select>
+        </div>
+
+        <!-- Read Feature: Global Listen to Page Button -->
+        <button id="globalReadPageBtn" class="btn-read-page" title="Listen to entire page read aloud in selected language">
+          🔊 <span data-i18n="readPageBtn">Listen to Page</span>
+        </button>
+
+        <!-- Logged-in Worker Profile Chip -->
+        <div class="user-profile-badge" id="userProfileBadge" title="Click to switch worker profile">
+          <div class="user-badge-avatar" id="badgeAvatar">🛵</div>
+          <div class="user-badge-details">
+            <h4 id="badgeName">Raju Kumar</h4>
+            <p id="badgeRole">Pick & Drop Partner</p>
+          </div>
+        </div>
+
+        <button id="logoutBtn" class="btn-logout" title="Switch or sign out">Switch (10 Max)</button>
+      </div>
+    </header>
+
+    <!-- Sub-Nav Strip for the 5 Dedicated Single Topic Pages -->
+    <nav class="topic-nav-strip">
+      <button class="topic-tab-btn active" data-page="earnings">
+        <span>💰</span> <span data-i18n="navEarnings">Earnings Tracking</span> <span class="tab-tag">Real-Wage</span>
+      </button>
+      <button class="topic-tab-btn" data-page="safety">
+        <span>🛡️</span> <span data-i18n="navSafety">Safety Practices</span> <span class="tab-tag" style="background:rgba(239,68,68,0.2); color:#fca5a5;">SOS 24/7</span>
+      </button>
+      <button class="topic-tab-btn" data-page="welfare">
+        <span>📜</span> <span data-i18n="navWelfare">Rights & Welfare</span> <span class="tab-tag">e-Shram</span>
+      </button>
+      <button class="topic-tab-btn" data-page="documents">
+        <span>📑</span> <span data-i18n="navDocs">Document Help</span> <span class="tab-tag">OCR Vision</span>
+      </button>
+      <button class="topic-tab-btn" data-page="grievance">
+        <span>⚖️</span> <span data-i18n="navGrievance">Grievance Drafter</span> <span class="tab-tag">Dispute AI</span>
+      </button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-container">
+
+      <!-- Speech Playback Status Banner (Active during speech synthesis) -->
+      <div class="speech-playback-banner" id="speechPlaybackBanner">
+        <div class="speech-status-left">
+          <div class="speech-waves-anim">
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+          </div>
+          <span id="speechBannerText">Reading page in Hindi...</span>
+        </div>
+        <button class="btn-stop-speech" id="stopAudioBannerBtn">
+          <span>⏹ Stop Audio</span>
+        </button>
+      </div>
+
+      <!-- ==================================================================
+           PAGE 1: EARNINGS TRACKING (कमाई हिसाब)
+           ================================================================== -->
+      <section class="page-view" id="page-earnings">
+        <div class="page-title-banner">
+          <div class="page-title-left">
+            <div class="page-title-icon emerald">💰</div>
+            <div>
+              <h2 data-i18n="navEarnings">Earnings Tracking (कमाई हिसाब)</h2>
+              <p>True Take-Home Wage vs. Hidden Platform Cuts, Fuel & Expenses</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn-read-section" data-read-target="page-earnings">
+              🔊 Listen to Section
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="earnings-kpis-grid">
+          <div class="earnings-kpi gross">
+            <span class="kpi-title" data-i18n="grossEarnings">Gross Earned</span>
+            <div class="kpi-big-num" id="kpiGrossVal">₹980</div>
+            <span class="kpi-hint">Aggregator reported gross</span>
+          </div>
+          <div class="earnings-kpi deductions">
+            <span class="kpi-title" data-i18n="platformCuts">Platform Deductions</span>
+            <div class="kpi-big-num" id="kpiDeductionsVal">-₹140</div>
+            <span class="kpi-hint">Cancellation fee & penalties</span>
+          </div>
+          <div class="earnings-kpi net">
+            <span class="kpi-title" data-i18n="netEarnings">Real Net Pay</span>
+            <div class="kpi-big-num" id="kpiNetVal">₹560</div>
+            <span class="kpi-hint">In-hand after fuel & fees</span>
+          </div>
+          <div class="earnings-kpi rate">
+            <span class="kpi-title" data-i18n="hourlyRate">True Hourly Rate</span>
+            <div class="kpi-big-num" id="kpiHourlyVal">₹65.8/hr</div>
+            <span class="kpi-hint">For 8.5 active shift hours</span>
+          </div>
+        </div>
+
+        <!-- Split Grid: Smart Calculator & AI Financial Coach -->
+        <div class="earnings-columns-grid">
+          <div class="card-box">
+            <h3><span>🧮</span> Log Today's Shift & Real Expenses</h3>
+            <p class="card-box-sub">Enter your app payout and on-ground expenses to reveal your true take-home earnings.</p>
+
+            <form id="earningsCalcForm">
+              <div class="calculator-grid">
+                <div class="calc-field">
+                  <label for="calcGross">Gross App Earnings (₹)</label>
+                  <input type="number" id="calcGross" value="980" min="0">
+                </div>
+                <div class="calc-field">
+                  <label for="calcFuel">Actual Fuel / EV Cost (₹)</label>
+                  <input type="number" id="calcFuel" value="280" min="0">
+                </div>
+                <div class="calc-field">
+                  <label for="calcDeductions">Fines / Bag / Penalties (₹)</label>
+                  <input type="number" id="calcDeductions" value="140" min="0">
+                </div>
+                <div class="calc-field">
+                  <label for="calcHours">Total Hours on Road (hrs)</label>
+                  <input type="number" id="calcHours" value="8.5" step="0.5" min="1">
+                </div>
+              </div>
+              <button type="submit" class="btn-calc-submit">Calculate Real Wage & AI Insights</button>
+            </form>
+
+            <div style="margin-top: 1.5rem;">
+              <h4 style="font-size:0.85rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-muted)">Recent Shifts History</h4>
+              <table class="earnings-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Platform</th>
+                    <th>Gross</th>
+                    <th>Fuel</th>
+                    <th>Net In-Hand</th>
+                    <th>Hourly</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>16 Oct 2026</td>
+                    <td>Zomato / Swiggy</td>
+                    <td>₹1,120</td>
+                    <td>₹310</td>
+                    <td style="color:var(--emerald-primary); font-weight:700;">₹680</td>
+                    <td>₹75.5/hr</td>
+                  </tr>
+                  <tr>
+                    <td>15 Oct 2026</td>
+                    <td>Swiggy</td>
+                    <td>₹840</td>
+                    <td>₹260</td>
+                    <td style="color:var(--emerald-primary); font-weight:700;">₹430</td>
+                    <td>₹53.7/hr</td>
+                  </tr>
+                  <tr>
+                    <td>14 Oct 2026</td>
+                    <td>Zomato</td>
+                    <td>₹1,350</td>
+                    <td>₹380</td>
+                    <td style="color:var(--emerald-primary); font-weight:700;">₹810</td>
+                    <td>₹81.0/hr</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="ai-coach-bubble">
+              <div class="ai-coach-head">
+                <div class="ai-coach-title">
+                  <span>🧠</span> <span data-i18n="aiAdviceTitle">AI Financial Co-pilot Insights</span>
+                </div>
+                <button class="btn-read-section" style="padding:0.2rem 0.5rem; font-size:0.7rem;" data-read-target="earningsAiCoachTip">
+                  🔊 Read Tip
+                </button>
+              </div>
+              <p class="ai-coach-text" id="earningsAiCoachTip">
+                आज आपकी शुद्ध कमाई ₹560 (₹65.8/घंटा) रही। ईंधन पर आपका खर्च 28.5% रहा जो संतुलित है। सुझाव: ₹140 जो पेनाल्टी में कट गए हैं, उन्हें वापस पाने के लिए 'न्याय ड्राफ़्टर' से अपील भेजें।
+              </p>
+            </div>
+
+            <div style="background:var(--bg-elevated); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem;">
+              <h4 style="font-size:0.85rem; font-weight:700; margin-bottom:0.5rem; color:var(--amber-light);">⚡ High-Yield Shift Scheduling Advice:</h4>
+              <ul style="list-style:none; display:flex; flex-direction:column; gap:0.5rem; font-size:0.8rem; color:#cbd5e1;">
+                <li>• <strong>Dinner Surge Peak (7:30 PM - 11:30 PM):</strong> Yields 2.3x higher order volume per kilometer traveled compared to afternoon slots.</li>
+                <li>• <strong>Fuel Conservation:</strong> Keeping speed below 45 km/h on two-wheelers reduces fuel burn by up to 18% in stop-and-go city traffic.</li>
+                <li>• <strong>Wait-Time Recovery:</strong> If order preparation takes >8 minutes at restaurant, claim statutory wait compensation via app support.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PAGE 2: SAFETY PRACTICES (सुरक्षा नियम)
+           ================================================================== -->
+      <section class="page-view" id="page-safety" style="display:none;">
+        <div class="page-title-banner">
+          <div class="page-title-left">
+            <div class="page-title-icon crimson">🛡️</div>
+            <div>
+              <h2 data-i18n="navSafety">Safety Practices & 24/7 Field Hub (सुरक्षा नियम)</h2>
+              <p>Road Accident Prevention, Night Shift Protocols & Instant SOS</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn-read-section" data-read-target="page-safety">
+              🔊 Listen to Section
+            </button>
+          </div>
+        </div>
+
+        <div class="safety-grid">
+          <div class="card-box">
+            <h3 data-i18n="safetyChecklistTitle">Daily Pre-Shift & Field Safety Checklist</h3>
+            <p class="card-box-sub">Complete this quick check before logging into delivery apps to ensure your life and vehicle safety.</p>
+
+            <div class="safety-check-item">
+              <input type="checkbox" id="chk1" checked>
+              <div class="safety-check-info">
+                <h4>1. ISI-Certified Helmet & Reflective Vest (हेलमेट व चमकीली जैकेट)</h4>
+                <p>Always strap your helmet securely. Reflective vests make you visible to heavy trucks and speeding cars at night.</p>
+              </div>
+            </div>
+
+            <div class="safety-check-item">
+              <input type="checkbox" id="chk2" checked>
+              <div class="safety-check-info">
+                <h4>2. Brake & Tire Pressure Inspection (ब्रेक और टायर की जांच)</h4>
+                <p>Ensure front and rear brakes bite firmly. Check tread depth to avoid skidding on wet roads and oil spills.</p>
+              </div>
+            </div>
+
+            <div class="safety-check-item">
+              <input type="checkbox" id="chk3">
+              <div class="safety-check-info">
+                <h4>3. Secure Smartphone Handlebar Mount (फोन होल्डर)</h4>
+                <p>Never hold phone in one hand while driving. Keep eyes on the road and rely on audio GPS guidance.</p>
+              </div>
+            </div>
+
+            <div class="safety-check-item">
+              <input type="checkbox" id="chk4">
+              <div class="safety-check-info">
+                <h4>4. Extreme Weather & Heatwave Hydration (गर्मी व बारिश में पानी)</h4>
+                <p>Drink ORS / electrolyte water every 45 minutes during 40°C+ summer heat to prevent heat stroke and dizziness.</p>
+              </div>
+            </div>
+
+            <div class="safety-check-item">
+              <input type="checkbox" id="chk5">
+              <div class="safety-check-info">
+                <h4>5. Hostile Customer & Dark Alley Drop-off Protocol (असुरक्षित स्थान नियम)</h4>
+                <p>If drop location is unlit or customer acts aggressive, step back to main gate and call platform emergency safety line.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SOS Emergency Dispatch Widget -->
+          <div class="sos-widget-box">
+            <h3 style="color:#fca5a5;" data-i18n="emergencySosTitle">One-Touch Emergency SOS Dispatch</h3>
+            <p style="font-size:0.775rem; color:#fca5a5; margin-top:0.25rem;">Triggers audio siren and broadcasts live GPS location</p>
+
+            <button class="sos-btn-circle" id="bigSosTrigger">
+              <span>SOS</span>
+              <span style="font-size:0.7rem; font-weight:600; opacity:0.9;">EMERGENCY</span>
+            </button>
+
+            <p id="sosStatusText" style="font-size:0.8rem; color:#fecaca; margin-top:0.75rem;">
+              Tap SOS in emergency to activate siren and dispatch GPS coordinates.
+            </p>
+
+            <div class="emergency-numbers-list">
+              <div class="emergency-number-row">
+                <span>🚓 All-India Police Emergency</span>
+                <a href="tel:112">Dial 112</a>
+              </div>
+              <div class="emergency-number-row">
+                <span>🚑 Ambulance / Medical Helpline</span>
+                <a href="tel:108">Dial 108</a>
+              </div>
+              <div class="emergency-number-row">
+                <span>👩 Women Safety Helpline</span>
+                <a href="tel:1091">Dial 1091</a>
+              </div>
+              <div class="emergency-number-row">
+                <span>⚖️ National Labor Helpline (MoLE)</span>
+                <a href="tel:14434">Dial 14434</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PAGE 3: RIGHTS & WELFARE SCHEMES (हक और सरकारी योजनाएँ)
+           ================================================================== -->
+      <section class="page-view" id="page-welfare" style="display:none;">
+        <div class="page-title-banner">
+          <div class="page-title-left">
+            <div class="page-title-icon amber">📜</div>
+            <div>
+              <h2 data-i18n="navWelfare">Rights & Welfare Scheme Awareness (हक और सरकारी योजनाएँ)</h2>
+              <p>Government Social Security, Free Accidental Cover & Gig Worker Protection Acts</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn-read-section" data-read-target="page-welfare">
+              🔊 Listen to Section
+            </button>
+          </div>
+        </div>
+
+        <!-- Welfare Schemes Grid -->
+        <div class="schemes-cards-row" id="schemesGrid">
+          <!-- Populated dynamically from data.js -->
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PAGE 4: DOCUMENT HELP (कागज़ सहायता)
+           ================================================================== -->
+      <section class="page-view" id="page-documents" style="display:none;">
+        <div class="page-title-banner">
+          <div class="page-title-left">
+            <div class="page-title-icon cyan">📑</div>
+            <div>
+              <h2 data-i18n="navDocs">Document Help & Penalty Decrypter (कागज़ सहायता)</h2>
+              <p>Multimodal GenAI Simplification of Fine Print, Negative Payout Slips & Challans</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn-read-section" data-read-target="page-documents">
+              🔊 Listen to Section
+            </button>
+          </div>
+        </div>
+
+        <div class="doc-help-grid">
+          <div class="card-box">
+            <h3 data-i18n="docsUploadTitle">Document & Penalty Jargon Decrypter</h3>
+            <p class="card-box-sub" data-i18n="docsUploadSub">Select a sample document or upload your pay slip, challan, or deactivation notice</p>
+
+            <div class="dropzone-box" id="docDropzone">
+              <div class="dropzone-icon">📷</div>
+              <h4>Upload or Photograph Document</h4>
+              <p>Click to upload pay slip, deactivation notice, or police challan</p>
+              <input type="file" id="docFileInput" class="file-input-hidden" accept="image/*,.pdf,.txt">
+            </div>
+
+            <div class="sample-docs-label" style="margin-top:1.25rem;">
+              <span>⚡ Click to Inspect Realistic Pre-Loaded Samples:</span>
+            </div>
+
+            <div class="doc-sample-buttons">
+              <button class="doc-sample-chip active" data-doc-id="doc-1">
+                <span>1. Unfair Order Cancellation Penalty Slip</span>
+                <span class="type">-₹675 Cut</span>
+              </button>
+              <button class="doc-sample-chip" data-doc-id="doc-2">
+                <span>2. Algorithmic Account Deactivation Warning</span>
+                <span class="type">ID Restricted</span>
+              </button>
+              <button class="doc-sample-chip" data-doc-id="doc-3">
+                <span>3. Traffic Police No-Parking e-Challan</span>
+                <span class="type">₹1,000 Fine</span>
+              </button>
+              <button class="doc-sample-chip" data-doc-id="doc-4">
+                <span>4. Medical Insurance Claim Rejection Notice</span>
+                <span class="type">₹38,500 Denied</span>
+              </button>
+            </div>
+
+            <h4 style="font-size:0.775rem; color:var(--text-muted); margin-top:1rem;">Document Raw Text / OCR Extract:</h4>
+            <div class="raw-doc-snippet" id="rawDocSnippet">
+              <!-- Rendered via app.js -->
+            </div>
+          </div>
+
+          <!-- GenAI Plain Language Analysis -->
+          <div class="doc-analysis-box">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+              <h3 style="font-size:1.05rem; font-weight:700;">🤖 GenAI Plain Language Breakdown</h3>
+              <button class="btn-read-section" style="padding:0.25rem 0.6rem; font-size:0.75rem;" data-read-target="docSimpleMeaning">
+                🔊 Listen in Plain Words
+              </button>
+            </div>
+
+            <h4 style="font-size:0.775rem; text-transform:uppercase; color:var(--emerald-primary); font-weight:700; margin-bottom:0.35rem;">
+              ✓ What this actually means (आसान भाषा में अर्थ):
+            </h4>
+            <div class="explanation-simple-card" id="docSimpleMeaning">
+              <!-- Rendered via app.js -->
+            </div>
+
+            <h4 style="font-size:0.775rem; text-transform:uppercase; color:#f87171; font-weight:700; margin-bottom:0.35rem;">
+              ⚠️ Red Flags & Predatory Clauses (अनुचित बातें):
+            </h4>
+            <ul id="docRedFlagsList" style="list-style:none; margin-bottom:1rem;">
+              <!-- Rendered via app.js -->
+            </ul>
+
+            <h4 style="font-size:0.775rem; text-transform:uppercase; color:var(--amber-light); font-weight:700; margin-bottom:0.35rem;">
+              🚀 Immediate Action Plan (तुरंत क्या करें):
+            </h4>
+            <div id="docActionPlan" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:var(--radius-md); padding:0.85rem; font-size:0.825rem;">
+              <!-- Rendered via app.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           PAGE 5: GRIEVANCE OR DISPUTE DRAFTING (न्याय ड्राफ़्टर)
+           ================================================================== -->
+      <section class="page-view" id="page-grievance" style="display:none;">
+        <div class="page-title-banner">
+          <div class="page-title-left">
+            <div class="page-title-icon indigo">⚖️</div>
+            <div>
+              <h2 data-i18n="navGrievance">Grievance & Dispute AI Drafter (न्याय ड्राफ़्टर)</h2>
+              <p>Generate Legally Sound Appeals for Account Blocks, Penalty Deductions & Harassment</p>
+            </div>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn-read-section" data-read-target="page-grievance">
+              🔊 Listen to Section
+            </button>
+          </div>
+        </div>
+
+        <div class="grievance-columns">
+          <div class="grievance-input-card">
+            <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:0.35rem;">Describe Your Issue</h3>
+            <p class="card-box-sub">Our GenAI converts your problem into a high-impact appeal in simple or legal language.</p>
+
+            <form id="grievanceForm">
+              <div class="field-block">
+                <label for="grievanceWorkerName">Worker Name</label>
+                <input type="text" id="grievanceWorkerName" value="Raju Kumar">
+              </div>
+
+              <div class="field-block">
+                <label for="grievanceWorkerPhone">Registered Mobile</label>
+                <input type="tel" id="grievanceWorkerPhone" value="9876543210">
+              </div>
+
+              <div class="field-block">
+                <label for="grievancePlatform">Platform / Company</label>
+                <select id="grievancePlatform">
+                  <option value="Zomato">Zomato</option>
+                  <option value="Swiggy">Swiggy</option>
+                  <option value="Zepto">Zepto</option>
+                  <option value="Blinkit">Blinkit</option>
+                  <option value="Uber">Uber</option>
+                  <option value="Ola">Ola</option>
+                  <option value="Rapido">Rapido</option>
+                  <option value="Porter">Porter</option>
+                  <option value="Urban Company">Urban Company</option>
+                  <option value="Local Contractor">Local Contractor / Daily Gig</option>
+                </select>
+              </div>
+
+              <div class="field-block">
+                <label for="grievanceIssueType">Issue Type</label>
+                <select id="grievanceIssueType">
+                  <option value="Unfair Cancellation Penalty">Unfair Cancellation Penalty (-₹350 Deducted)</option>
+                  <option value="Wrongful Account Deactivation">Wrongful Account Deactivation / ID Block</option>
+                  <option value="Unpaid Wait Time & Surcharge">Unpaid Wait Time & Surcharge</option>
+                  <option value="Customer False Harassment Complaint">Customer False Complaint / Abusive Rating</option>
+                  <option value="Accident Insurance Claim Denial">Accident Insurance Claim Denial</option>
+                </select>
+              </div>
+
+              <div class="field-block">
+                <label for="grievanceOrderId">Order / Trip ID (If any)</label>
+                <input type="text" id="grievanceOrderId" value="ZO-8991201">
+              </div>
+
+              <div class="field-block">
+                <label for="grievanceDetails">What Happened? (in your own words)</label>
+                <textarea id="grievanceDetails">Order was canceled while I was waiting outside customer gate. Customer did not pick up phone calls for 10 minutes. Still company deducted ₹350 from my weekly settlement.</textarea>
+              </div>
+
+              <div class="field-block">
+                <label for="grievanceResolution">Desired Resolution</label>
+                <input type="text" id="grievanceResolution" value="Full refund of ₹350 penalty and score reset">
+              </div>
+
+              <button type="submit" class="btn-generate-draft">Generate AI Dispute Appeal</button>
+            </form>
+          </div>
+
+          <div class="grievance-result-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+              <h3 style="font-size:1.05rem; font-weight:700;">Generated Appeal Document</h3>
+              <button class="btn-read-section" style="padding:0.25rem 0.6rem; font-size:0.75rem;" data-read-target="grievanceDraftArea">
+                🔊 Listen to Draft
+              </button>
+            </div>
+
+            <!-- Tier Selector -->
+            <div class="tier-selector">
+              <button class="tier-btn active" data-tier="whatsapp">
+                💬 1. WhatsApp to Hub Lead
+              </button>
+              <button class="tier-btn" data-tier="email">
+                ✉️ 2. Formal Escalation Email
+              </button>
+              <button class="tier-btn" data-tier="legal">
+                🏛️ 3. State Labor Board Complaint
+              </button>
+            </div>
+
+            <div class="draft-box-area" id="grievanceDraftArea">
+              <!-- Rendered via app.js -->
+            </div>
+
+            <div class="draft-actions-strip">
+              <button class="btn-copy-draft" id="copyDraftBtn">
+                📋 Copy Text
+              </button>
+              <button class="btn-whatsapp-share" id="whatsappDraftBtn">
+                💬 1-Click Send via WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       GENAI FLOATING COPILOT (DOCKED DRAWER)
+       ====================================================================== -->
+  <button class="genai-dock-btn" id="genaiDockBtn">
+    <span>🤖</span> <span>Ask Saathi AI</span>
+  </button>
+
+  <div class="genai-drawer-overlay" id="genaiDrawerOverlay"></div>
+  <div class="genai-drawer" id="genaiDrawer">
+    <div class="drawer-head">
+      <div class="drawer-title-box">
+        <div style="font-size:1.4rem;">🤖</div>
+        <div>
+          <h3>GigSaathi AI Co-pilot</h3>
+          <p>Online • Multilingual Voice Guidance</p>
+        </div>
+      </div>
+      <button id="closeDrawerBtn" style="background:none; border:none; color:var(--text-muted); font-size:1.25rem; cursor:pointer;">✕</button>
+    </div>
+
+    <div class="drawer-messages" id="drawerMessagesList">
+      <div class="drawer-bubble ai">
+        नमस्ते! मैं आपका गिग साथी AI हूँ। कमाई की कटौती, पुलिस चालान, ई-श्रम योजना या आईडी ब्लॉक होने पर तुरंत सवाल पूछें।
+      </div>
+    </div>
+
+    <div class="drawer-input-row">
+      <input type="text" id="drawerTextInput" class="drawer-text-in" placeholder="Ask in Hindi, Tamil, English...">
+      <button class="btn-drawer-send" id="drawerSendBtn">➤</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toastMsg">Notification</div>
+
+  <!-- Application Scripts -->
+  <script src="scripts/data.js"></script>
+  <script src="scripts/speech.js"></script>
+  <script src="scripts/ai-engine.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>
