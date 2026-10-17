@@ -177,16 +177,11 @@
         </div>
       </div>
 
-      <!-- GenAI Neural Voice Read Feature Controls -->
+      <!-- Web Speech API Voice Read Feature Controls -->
       <div class="a11y-group">
-        <span class="a11y-label">🎙️ GenAI Voice:</span>
-        <select id="voicePersonaSelect" class="persona-select-input" title="Choose GenAI voice tone">
-          <option value="dost">👨‍💼 Raju Dost (Friendly Peer)</option>
-          <option value="didi">👩‍🏫 Sunita Didi (Supportive Guidance)</option>
-          <option value="adhikari">🎙️ Sahayak (Formal Clear)</option>
-        </select>
-        <button id="a11yReadPageBtn" class="btn-player-action" style="background:var(--amber-primary); color:#000;" title="Listen to entire page with GenAI Voice">
-          <span>🔊</span> <strong>GenAI Voice Read</strong>
+        <span class="a11y-label">🎙️ Speech:</span>
+        <button id="a11yReadPageBtn" class="btn-player-action" style="background:var(--amber-primary); color:#000;" title="Listen to entire page with Web Speech API">
+          <span>🔊</span> <strong>Read Page Aloud</strong>
         </button>
       </div>
     </div>
@@ -231,8 +226,8 @@
             <div class="swave-bar"></div>
           </div>
           <div>
-            <strong style="color:var(--cyan-primary);">GenAI Voice Speaking:</strong>
-            <span id="genaiPlayerStatusText" style="color:var(--text-main); margin-left:0.35rem;">Synthesizing neural audio...</span>
+            <strong style="color:var(--cyan-primary);">Voice Assistant Speaking:</strong>
+            <span id="genaiPlayerStatusText" style="color:var(--text-main); margin-left:0.35rem;">Speaking page in selected language...</span>
           </div>
         </div>
 

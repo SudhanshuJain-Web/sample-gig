@@ -1,35 +1,40 @@
 // ==========================================================================
-// GigSaathi AI - GenAI Text-To-Speech (TTS) & Neural Audio Engine
-// Generates and streams realistic neural speech audio via GenAI Neural TTS API
-// with real-time audio spectrum analyzer and accessible playback controls.
+// GigSaathi AI - Web Speech API Multilingual Voice Engine
+// Native browser SpeechSynthesis with full multilingual voices,
+// audio waveform visualizer, and accessible playback controls.
 // ==========================================================================
 
-class GenAITextToSpeechEngine {
+class WebSpeechVoiceEngine {
   constructor() {
-    this.currentAudio = null;
-    this.audioContext = null;
-    this.analyser = null;
-    this.sourceNode = null;
+    this.synth = window.speechSynthesis || null;
     this.isPlaying = false;
     this.isPaused = false;
+    this.currentUtterance = null;
     this.currentText = "";
     this.currentLang = "hi";
-    this.currentPersona = "dost"; // 'dost' (friendly), 'didi' (supportive sister), 'adhikari' (formal)
     this.currentSpeed = 1.0;
     this.onStateChangeCallbacks = [];
     this.visualizerInterval = null;
+    this.audioContext = null;
+    this.voices = [];
 
-    // Initialize Web Audio Context on first interaction
-    this.initAudioContext();
-  }
-
-  initAudioContext() {
-    if (!this.audioContext) {
-      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtxClass) {
-        this.audioContext = new AudioCtxClass();
+    // Load voices
+    if (this.synth) {
+      this.voices = this.synth.getVoices();
+      if (this.synth.onvoiceschanged !== undefined) {
+        this.synth.onvoiceschanged = () => {
+          this.voices = this.synth.getVoices();
+        };
       }
     }
+  }
+
+  getVoices() {
+    if (!this.synth) return [];
+    if (!this.voices || this.voices.length === 0) {
+      this.voices = this.synth.getVoices();
+    }
+    return this.voices;
   }
 
   registerStateListener(cb) {
@@ -44,163 +49,153 @@ class GenAITextToSpeechEngine {
 
   setSpeed(speed) {
     this.currentSpeed = parseFloat(speed) || 1.0;
-    if (this.currentAudio) {
-      this.currentAudio.playbackRate = this.currentSpeed;
+    // If speaking, restart with new rate
+    if (this.isPlaying && this.currentText) {
+      const text = this.currentText;
+      const lang = this.currentLang;
+      this.stop();
+      this.speak(text, lang, this.currentSpeed);
     }
-    this.notifyState({
-      playing: this.isPlaying,
-      paused: this.isPaused,
-      speed: this.currentSpeed,
-      text: this.currentText
-    });
   }
 
   setPersona(persona) {
-    this.currentPersona = persona || "dost";
+    // Retained for UI compatibility
   }
 
-  // Synthesize and play GenAI Neural Voice
-  async speak(text, lang = "hi", persona = null, speed = null) {
+  speak(text, lang = "hi", speed = null) {
+    if (!this.synth) {
+      console.warn("Web Speech API (speechSynthesis) is not supported in this browser.");
+      return;
+    }
+
     if (!text || text.trim() === "") return;
 
     this.stop();
-    this.initAudioContext();
-
-    if (this.audioContext && this.audioContext.state === "suspended") {
-      await this.audioContext.resume();
-    }
 
     this.currentText = text.trim();
     this.currentLang = lang || this.currentLang;
-    if (persona) this.currentPersona = persona;
     if (speed) this.currentSpeed = parseFloat(speed);
 
-    // Notify UI that GenAI is synthesizing voice
-    this.notifyState({
-      loading: true,
-      playing: false,
-      text: this.currentText.slice(0, 75) + "...",
-      lang: this.currentLang,
-      speed: this.currentSpeed,
-      persona: this.currentPersona
-    });
+    // Clean markdown/symbols for smooth speech
+    const cleanText = this.currentText
+      .replace(/[*#_`~>\[\]()|]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
 
-    try {
-      // Call GenAI TTS Neural Endpoint
-      const response = await fetch("/api/genai-tts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          text: this.currentText,
-          lang: this.currentLang,
-          persona: this.currentPersona,
-          speed: this.currentSpeed
-        })
-      });
+    const utterance = new SpeechSynthesisUtterance(cleanText);
 
-      if (!response.ok) {
-        throw new Error(`GenAI TTS HTTP error: ${response.status}`);
+    // Map language code to standard speech locale
+    const langMap = {
+      hi: "hi-IN",
+      en: "en-US",
+      hinglish: "hi-IN",
+      ta: "ta-IN",
+      te: "te-IN",
+      bn: "bn-IN",
+      mr: "mr-IN",
+      kn: "kn-IN",
+      gu: "gu-IN"
+    };
+
+    const targetLangCode = langMap[this.currentLang] || "hi-IN";
+    utterance.lang = targetLangCode;
+    utterance.rate = this.currentSpeed;
+    utterance.pitch = 1.0;
+
+    // Pick best matching installed voice
+    const voices = this.getVoices();
+    if (voices.length > 0) {
+      const langPrefix = targetLangCode.split("-")[0];
+      const match = voices.find(v => v.lang === targetLangCode) ||
+                    voices.find(v => v.lang.startsWith(langPrefix));
+      if (match) {
+        utterance.voice = match;
       }
-
-      const data = await response.json();
-      if (!data.audioUrl) {
-        throw new Error("No audioUrl returned by GenAI TTS");
-      }
-
-      // Play synthesized audio
-      this.playAudioUrl(data.audioUrl);
-
-    } catch (err) {
-      console.warn("GenAI TTS server error, using resilient client synthesis fallback:", err);
-      this.fallbackSpeechSynthesis(this.currentText, this.currentLang, this.currentSpeed);
-    }
-  }
-
-  playAudioUrl(audioUrl) {
-    const audio = new Audio(audioUrl);
-    audio.playbackRate = this.currentSpeed;
-    this.currentAudio = audio;
-
-    // Connect to Web Audio Analyser for real-time frequency bars
-    try {
-      if (this.audioContext) {
-        this.analyser = this.audioContext.createAnalyser();
-        this.analyser.fftSize = 64;
-        this.sourceNode = this.audioContext.createMediaElementSource(audio);
-        this.sourceNode.connect(this.analyser);
-        this.analyser.connect(this.audioContext.destination);
-      }
-    } catch (e) {
-      // Audio element already connected or cross-origin
     }
 
-    audio.onplay = () => {
+    utterance.onstart = () => {
       this.isPlaying = true;
       this.isPaused = false;
       this.startVisualizer();
       this.notifyState({
         playing: true,
         paused: false,
-        text: this.currentText.slice(0, 80) + "...",
+        text: cleanText.slice(0, 80) + "...",
         lang: this.currentLang,
-        speed: this.currentSpeed,
-        persona: this.currentPersona
+        speed: this.currentSpeed
       });
     };
 
-    audio.onpause = () => {
-      if (this.currentAudio && !this.currentAudio.ended) {
-        this.isPlaying = false;
-        this.isPaused = true;
-        this.stopVisualizer();
-        this.notifyState({
-          playing: false,
-          paused: true,
-          text: this.currentText.slice(0, 80) + "..."
-        });
-      }
+    utterance.onpause = () => {
+      this.isPlaying = false;
+      this.isPaused = true;
+      this.stopVisualizer();
+      this.notifyState({
+        playing: false,
+        paused: true,
+        text: cleanText.slice(0, 80) + "..."
+      });
     };
 
-    audio.onended = () => {
+    utterance.onresume = () => {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.startVisualizer();
+      this.notifyState({
+        playing: true,
+        paused: false,
+        text: cleanText.slice(0, 80) + "..."
+      });
+    };
+
+    utterance.onend = () => {
       this.stop();
     };
 
-    audio.onerror = (e) => {
-      console.warn("Audio playback error:", e);
+    utterance.onerror = (e) => {
+      console.warn("SpeechSynthesis error:", e);
       this.stop();
     };
 
-    audio.play().catch(e => {
-      console.warn("Autoplay policy or playback blocked:", e);
-      this.fallbackSpeechSynthesis(this.currentText, this.currentLang, this.currentSpeed);
-    });
+    this.currentUtterance = utterance;
+    this.synth.speak(utterance);
   }
 
   pause() {
-    if (this.currentAudio && !this.currentAudio.paused) {
-      this.currentAudio.pause();
+    if (this.synth && this.synth.speaking && !this.synth.paused) {
+      this.synth.pause();
+      this.isPlaying = false;
+      this.isPaused = true;
+      this.stopVisualizer();
+      this.notifyState({
+        playing: false,
+        paused: true,
+        text: this.currentText.slice(0, 80) + "..."
+      });
     }
   }
 
   resume() {
-    if (this.currentAudio && this.currentAudio.paused) {
-      this.currentAudio.play();
+    if (this.synth && this.synth.paused) {
+      this.synth.resume();
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.startVisualizer();
+      this.notifyState({
+        playing: true,
+        paused: false,
+        text: this.currentText.slice(0, 80) + "..."
+      });
     }
   }
 
   stop() {
-    if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio.currentTime = 0;
-      this.currentAudio = null;
-    }
-    if (window.speechSynthesis && window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
+    if (this.synth) {
+      this.synth.cancel();
     }
     this.isPlaying = false;
     this.isPaused = false;
+    this.currentUtterance = null;
     this.stopVisualizer();
     this.notifyState({
       playing: false,
@@ -209,29 +204,18 @@ class GenAITextToSpeechEngine {
     });
   }
 
-  // Real-time audio waveform animation
+  // Real-time audio waveform equalizer animation
   startVisualizer() {
     this.stopVisualizer();
     const bars = document.querySelectorAll(".swave-bar");
     if (!bars || bars.length === 0) return;
 
     this.visualizerInterval = setInterval(() => {
-      if (this.analyser) {
-        const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-        this.analyser.getByteFrequencyData(dataArray);
-        bars.forEach((bar, idx) => {
-          const val = dataArray[idx % dataArray.length] || 50;
-          const height = Math.max(4, (val / 255) * 22);
-          bar.style.height = `${height}px`;
-        });
-      } else {
-        // Organic pulse if analyser not connected
-        bars.forEach((bar) => {
-          const rand = Math.floor(Math.random() * 18) + 4;
-          bar.style.height = `${rand}px`;
-        });
-      }
-    }, 75);
+      bars.forEach((bar) => {
+        const rand = Math.floor(Math.random() * 18) + 4;
+        bar.style.height = `${rand}px`;
+      });
+    }, 80);
   }
 
   stopVisualizer() {
@@ -245,56 +229,13 @@ class GenAITextToSpeechEngine {
     });
   }
 
-  // Client-side fallback if server disconnected
-  fallbackSpeechSynthesis(text, lang, speed) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-
-    const cleanText = text.replace(/[*#_`~>\[\]()]/g, " ").replace(/\s+/g, " ").trim();
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    const langMap = {
-      hi: "hi-IN",
-      en: "en-US",
-      hinglish: "hi-IN",
-      ta: "ta-IN",
-      te: "te-IN",
-      bn: "bn-IN",
-      mr: "mr-IN",
-      kn: "kn-IN",
-      gu: "gu-IN"
-    };
-    utterance.lang = langMap[lang] || "hi-IN";
-    utterance.rate = speed || 1.0;
-
-    utterance.onstart = () => {
-      this.isPlaying = true;
-      this.startVisualizer();
-      this.notifyState({
-        playing: true,
-        paused: false,
-        text: cleanText.slice(0, 80) + "...",
-        lang: lang,
-        speed: speed
-      });
-    };
-
-    utterance.onend = () => {
-      this.stop();
-    };
-
-    utterance.onerror = () => {
-      this.stop();
-    };
-
-    window.speechSynthesis.speak(utterance);
-  }
-
-  // Audio cue tones (chime or SOS siren)
+  // Synthetic tone generator (Chime & SOS alarm)
   playAudioCue(type = "chime") {
     try {
-      this.initAudioContext();
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+      if (!this.audioContext) this.audioContext = new AudioCtxClass();
       const ctx = this.audioContext;
-      if (!ctx) return;
       if (ctx.state === "suspended") ctx.resume();
 
       if (type === "chime") {
@@ -329,6 +270,7 @@ class GenAITextToSpeechEngine {
   }
 }
 
-// Global GenAI TTS Instance
-const genAIVoiceEngine = new GenAITextToSpeechEngine();
-const voiceEngine = genAIVoiceEngine; // Backwards compatibility alias
+// Global Web Speech Voice Engine Instance
+const webSpeechVoiceEngine = new WebSpeechVoiceEngine();
+const voiceEngine = webSpeechVoiceEngine;
+const genAIVoiceEngine = webSpeechVoiceEngine; // Alias for backward compatibility
