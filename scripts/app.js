@@ -20,6 +20,7 @@ class GigSaathiApp {
     this.setupNavigation();
     this.setupSpeechListeners();
     this.setupLanguageSelector();
+    this.setupAccessibility();
     this.setupEarningsPage();
     this.setupSafetyPage();
     this.setupWelfarePage();
@@ -174,10 +175,138 @@ class GigSaathiApp {
     });
   }
 
+  // --- WEB ACCESSIBILITY CONTROLS ---
+  setupAccessibility() {
+    // Theme Switcher (Dark / Light)
+    const themeBtn = document.getElementById("themeToggleBtn");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+    const savedTheme = localStorage.getItem("gig_theme") || "dark";
+    
+    this.applyTheme(savedTheme);
+
+    themeBtn.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+      const nextTheme = currentTheme === "dark" ? "light" : "dark";
+      this.applyTheme(nextTheme);
+      this.showToast(`Switched to ${nextTheme === "light" ? "☀️ Light Mode" : "🌙 Dark Mode"}`);
+      voiceEngine.playAudioCue("chime");
+    });
+
+    // Outdoor Sunlight High Contrast Mode
+    const contrastBtn = document.getElementById("highContrastBtn");
+    contrastBtn.addEventListener("click", () => {
+      const isHigh = document.documentElement.getAttribute("data-contrast") === "high";
+      if (isHigh) {
+        document.documentElement.removeAttribute("data-contrast");
+        contrastBtn.classList.remove("active");
+        this.showToast("Standard Contrast Mode restored");
+      } else {
+        document.documentElement.setAttribute("data-contrast", "high");
+        contrastBtn.classList.add("active");
+        this.showToast("🔆 Sunlight High-Contrast Mode Activated!");
+      }
+      voiceEngine.playAudioCue("chime");
+    });
+
+    // Font Sizing Controls
+    document.querySelectorAll(".btn-font-scale").forEach(btn => {
+      if (btn.classList.contains("btn-speed")) return; // speed controls handled separately
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".btn-font-scale:not(.btn-speed)").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const scale = btn.dataset.scale || "md";
+        document.documentElement.className = `font-scale-${scale}`;
+        this.showToast(`Text size set to: ${scale.toUpperCase()}`);
+      });
+    });
+
+    // Quick Translate Chips on Toolbar
+    document.querySelectorAll(".translate-chip-btn").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const lang = chip.dataset.lang;
+        this.switchLanguage(lang);
+      });
+    });
+
+    // GenAI Voice Persona Selector
+    const personaSelect = document.getElementById("voicePersonaSelect");
+    if (personaSelect) {
+      personaSelect.addEventListener("change", (e) => {
+        genAIVoiceEngine.setPersona(e.target.value);
+        this.showToast(`GenAI Voice Persona: ${e.target.options[e.target.selectedIndex].text}`);
+      });
+    }
+
+    // Accessible GenAI Voice Read Button
+    const a11yReadBtn = document.getElementById("a11yReadPageBtn");
+    if (a11yReadBtn) {
+      a11yReadBtn.addEventListener("click", () => {
+        if (genAIVoiceEngine.isPlaying) {
+          genAIVoiceEngine.stop();
+        } else {
+          this.readCurrentPageAloud();
+        }
+      });
+    }
+
+    // Docked Audio Player Controls
+    const pauseResumeBtn = document.getElementById("playerPauseResumeBtn");
+    const stopBtn = document.getElementById("playerStopBtn");
+    const pauseResumeIcon = document.getElementById("pauseResumeIcon");
+    const pauseResumeText = document.getElementById("pauseResumeText");
+
+    if (pauseResumeBtn) {
+      pauseResumeBtn.addEventListener("click", () => {
+        if (genAIVoiceEngine.isPaused) {
+          genAIVoiceEngine.resume();
+        } else if (genAIVoiceEngine.isPlaying) {
+          genAIVoiceEngine.pause();
+        }
+      });
+    }
+
+    if (stopBtn) {
+      stopBtn.addEventListener("click", () => {
+        genAIVoiceEngine.stop();
+      });
+    }
+
+    // Speed Controls (0.8x, 1.0x, 1.25x)
+    document.querySelectorAll(".btn-speed").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".btn-speed").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const speed = parseFloat(btn.dataset.speed) || 1.0;
+        genAIVoiceEngine.setSpeed(speed);
+        this.showToast(`GenAI Voice Speed: ${speed}x`);
+      });
+    });
+  }
+
+  applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("gig_theme", theme);
+    const themeIcon = document.getElementById("themeIcon");
+    const themeText = document.getElementById("themeText");
+    if (theme === "light") {
+      if (themeIcon) themeIcon.textContent = "☀️";
+      if (themeText) themeText.textContent = "Light Mode";
+    } else {
+      if (themeIcon) themeIcon.textContent = "🌙";
+      if (themeText) themeText.textContent = "Dark Mode";
+    }
+  }
+
   switchLanguage(langCode) {
     this.currentLang = langCode;
     const langSelect = document.getElementById("globalLangPicker");
     if (langSelect) langSelect.value = langCode;
+
+    // Update active translate chip
+    document.querySelectorAll(".translate-chip-btn").forEach(chip => {
+      chip.classList.toggle("active", chip.dataset.lang === langCode);
+    });
 
     const dict = TRANSLATIONS[langCode] || TRANSLATIONS.en;
 
@@ -216,60 +345,78 @@ class GigSaathiApp {
     return names[code] || code;
   }
 
-  // --- AUDIO READ FEATURE (LISTEN TO PAGE IN DIFFERENT LANGUAGES) ---
+  // --- GENAI TEXT-TO-SPEECH (TTS) PLAYER LISTENERS ---
   setupSpeechListeners() {
     const globalReadBtn = document.getElementById("globalReadPageBtn");
-    const stopAudioBtn = document.getElementById("stopAudioBannerBtn");
-    const banner = document.getElementById("speechPlaybackBanner");
-    const bannerText = document.getElementById("speechBannerText");
+    const a11yReadBtn = document.getElementById("a11yReadPageBtn");
+    const playerBar = document.getElementById("genaiVoicePlayerBar");
+    const statusText = document.getElementById("genaiPlayerStatusText");
+    const pauseResumeIcon = document.getElementById("pauseResumeIcon");
+    const pauseResumeText = document.getElementById("pauseResumeText");
 
-    // Connect voice engine status callbacks
-    voiceEngine.registerStateListener((speaking, textSnippet) => {
-      if (speaking) {
-        banner.classList.add("active");
-        globalReadBtn.classList.add("speaking");
-        globalReadBtn.innerHTML = `⏹ Stop Listening`;
-        if (bannerText) bannerText.textContent = `Reading in ${this.getLangDisplayName(this.currentLang)}: ${textSnippet}`;
+    // Connect GenAI Voice Engine status callback
+    genAIVoiceEngine.registerStateListener((state) => {
+      if (state.loading) {
+        playerBar.classList.add("active");
+        if (statusText) statusText.textContent = `Synthesizing GenAI Neural Voice (${this.getLangDisplayName(this.currentLang)})...`;
+        if (globalReadBtn) globalReadBtn.innerHTML = `⏳ Synthesizing...`;
+        if (a11yReadBtn) a11yReadBtn.innerHTML = `⏳ Synthesizing...`;
+      } else if (state.playing) {
+        playerBar.classList.add("active");
+        if (statusText) statusText.textContent = `Speaking in ${this.getLangDisplayName(this.currentLang)}: "${state.text || ''}"`;
+        if (globalReadBtn) {
+          globalReadBtn.classList.add("speaking");
+          globalReadBtn.innerHTML = `⏹ Stop Audio`;
+        }
+        if (a11yReadBtn) {
+          a11yReadBtn.innerHTML = `⏹ <strong>Stop Voice</strong>`;
+        }
+        if (pauseResumeIcon) pauseResumeIcon.textContent = "⏸";
+        if (pauseResumeText) pauseResumeText.textContent = "Pause";
+      } else if (state.paused) {
+        if (pauseResumeIcon) pauseResumeIcon.textContent = "▶";
+        if (pauseResumeText) pauseResumeText.textContent = "Resume";
+        if (statusText) statusText.textContent = `Paused: "${state.text || ''}"`;
       } else {
-        banner.classList.remove("active");
-        globalReadBtn.classList.remove("speaking");
-        const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS.en;
-        globalReadBtn.innerHTML = `🔊 ${dict.readPageBtn}`;
+        playerBar.classList.remove("active");
+        if (globalReadBtn) {
+          globalReadBtn.classList.remove("speaking");
+          const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS.en;
+          globalReadBtn.innerHTML = `🔊 ${dict.readPageBtn}`;
+        }
+        if (a11yReadBtn) {
+          a11yReadBtn.innerHTML = `🔊 <strong>GenAI Voice Read</strong>`;
+        }
+        if (pauseResumeIcon) pauseResumeIcon.textContent = "⏸";
+        if (pauseResumeText) pauseResumeText.textContent = "Pause";
       }
     });
 
-    // Global "🔊 Listen to Page" button click handler
+    // Global Top Bar Read Button
     globalReadBtn.addEventListener("click", () => {
-      if (voiceEngine.isSpeaking) {
-        voiceEngine.stop();
+      if (genAIVoiceEngine.isPlaying) {
+        genAIVoiceEngine.stop();
       } else {
         this.readCurrentPageAloud();
       }
     });
 
-    stopAudioBtn.addEventListener("click", () => {
-      voiceEngine.stop();
-    });
-
-    // Individual section read buttons
+    // Section Read Buttons
     document.querySelectorAll(".btn-read-section").forEach(btn => {
       btn.addEventListener("click", () => {
         const targetId = btn.dataset.readTarget;
         const targetElem = document.getElementById(targetId);
         if (targetElem) {
           const textToSpeak = targetElem.innerText || targetElem.textContent;
-          const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS.en;
-          voiceEngine.speak(textToSpeak, dict.speechLangCode || "hi-IN");
+          genAIVoiceEngine.speak(textToSpeak, this.currentLang);
         }
       });
     });
   }
 
   readCurrentPageAloud() {
-    // Generates a tailored, natural multilingual spoken script for the page
     const script = aiEngine.getPageSpokenScript(this.currentPage, this.currentLang, this.currentWorker);
-    const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS.en;
-    voiceEngine.speak(script, dict.speechLangCode || "hi-IN");
+    genAIVoiceEngine.speak(script, this.currentLang);
   }
 
   // --- PAGE 1: EARNINGS TRACKING ---

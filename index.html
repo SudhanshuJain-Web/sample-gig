@@ -130,6 +130,67 @@
       </div>
     </header>
 
+    <!-- ======================================================================
+         WEB ACCESSIBILITY CONTROL BAR (ON HOME PAGE)
+         - Theme: Light / Dark Mode Toggle
+         - Outdoor Sunlight High-Contrast Mode
+         - Text Sizing (A-, A, A+, A++)
+         - Instant Text Translate Chips
+         - GenAI Neural TTS Voice Controls (Dost, Didi, Adhikari)
+         ====================================================================== -->
+    <div class="accessibility-bar" id="accessibilityPanel" role="region" aria-label="Web Accessibility Controls">
+      <!-- Theme & Contrast Group -->
+      <div class="a11y-group">
+        <span class="a11y-label">🌗 Mode:</span>
+        <button id="themeToggleBtn" class="btn-theme-toggle" title="Toggle between Dark and Light mode">
+          <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        </button>
+        <button id="highContrastBtn" class="btn-a11y" title="Outdoor Sunlight Mode for high contrast visibility">
+          <span>🔆</span> <span>Sunlight Mode</span>
+        </button>
+      </div>
+
+      <!-- Text Size Scaling -->
+      <div class="a11y-group">
+        <span class="a11y-label">🔠 Text Size:</span>
+        <div class="font-size-btns" role="group" aria-label="Text Size Controls">
+          <button class="btn-font-scale" data-scale="sm" title="Small text">A-</button>
+          <button class="btn-font-scale active" data-scale="md" title="Default text">A</button>
+          <button class="btn-font-scale" data-scale="lg" title="Large text">A+</button>
+          <button class="btn-font-scale" data-scale="xl" title="Extra Large text">A++</button>
+        </div>
+      </div>
+
+      <!-- Text Translate Quick Chips -->
+      <div class="a11y-group">
+        <span class="a11y-label">🌐 Translate:</span>
+        <div class="translate-chips-scroll" id="translateChipsScroll">
+          <button class="translate-chip-btn active" data-lang="hi">हिन्दी</button>
+          <button class="translate-chip-btn" data-lang="en">English</button>
+          <button class="translate-chip-btn" data-lang="hinglish">Hinglish</button>
+          <button class="translate-chip-btn" data-lang="ta">தமிழ்</button>
+          <button class="translate-chip-btn" data-lang="te">తెలుగు</button>
+          <button class="translate-chip-btn" data-lang="bn">বাংলা</button>
+          <button class="translate-chip-btn" data-lang="mr">मराठी</button>
+          <button class="translate-chip-btn" data-lang="kn">ಕನ್ನಡ</button>
+          <button class="translate-chip-btn" data-lang="gu">ગુજરાતી</button>
+        </div>
+      </div>
+
+      <!-- GenAI Neural Voice Read Feature Controls -->
+      <div class="a11y-group">
+        <span class="a11y-label">🎙️ GenAI Voice:</span>
+        <select id="voicePersonaSelect" class="persona-select-input" title="Choose GenAI voice tone">
+          <option value="dost">👨‍💼 Raju Dost (Friendly Peer)</option>
+          <option value="didi">👩‍🏫 Sunita Didi (Supportive Guidance)</option>
+          <option value="adhikari">🎙️ Sahayak (Formal Clear)</option>
+        </select>
+        <button id="a11yReadPageBtn" class="btn-player-action" style="background:var(--amber-primary); color:#000;" title="Listen to entire page with GenAI Voice">
+          <span>🔊</span> <strong>GenAI Voice Read</strong>
+        </button>
+      </div>
+    </div>
+
     <!-- Sub-Nav Strip for the 5 Dedicated Single Topic Pages -->
     <nav class="topic-nav-strip">
       <button class="topic-tab-btn active" data-page="earnings">
@@ -152,21 +213,42 @@
     <!-- Main Container -->
     <main class="main-container">
 
-      <!-- Speech Playback Status Banner (Active during speech synthesis) -->
-      <div class="speech-playback-banner" id="speechPlaybackBanner">
-        <div class="speech-status-left">
-          <div class="speech-waves-anim">
+      <!-- GenAI Voice Audio Player Bar -->
+      <div class="genai-voice-player-bar" id="genaiVoicePlayerBar" role="region" aria-label="GenAI Audio Player">
+        <div class="player-info-side">
+          <div class="player-eq-bars" id="playerEqBars">
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
+            <div class="swave-bar"></div>
             <div class="swave-bar"></div>
             <div class="swave-bar"></div>
             <div class="swave-bar"></div>
             <div class="swave-bar"></div>
             <div class="swave-bar"></div>
           </div>
-          <span id="speechBannerText">Reading page in Hindi...</span>
+          <div>
+            <strong style="color:var(--cyan-primary);">GenAI Voice Speaking:</strong>
+            <span id="genaiPlayerStatusText" style="color:var(--text-main); margin-left:0.35rem;">Synthesizing neural audio...</span>
+          </div>
         </div>
-        <button class="btn-stop-speech" id="stopAudioBannerBtn">
-          <span>⏹ Stop Audio</span>
-        </button>
+
+        <div class="player-controls-side">
+          <button id="playerPauseResumeBtn" class="btn-player-action">
+            <span id="pauseResumeIcon">⏸</span> <span id="pauseResumeText">Pause</span>
+          </button>
+          <button id="playerStopBtn" class="btn-player-action stop">
+            <span>⏹</span> <span>Stop</span>
+          </button>
+          <div class="font-size-btns" style="margin-left:0.4rem;">
+            <button class="btn-font-scale btn-speed" data-speed="0.8">0.8x</button>
+            <button class="btn-font-scale btn-speed active" data-speed="1.0">1.0x</button>
+            <button class="btn-font-scale btn-speed" data-speed="1.25">1.25x</button>
+          </div>
+        </div>
       </div>
 
       <!-- ==================================================================

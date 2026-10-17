@@ -44,6 +44,284 @@
   --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Light Mode Overrides */
+[data-theme="light"] {
+  --bg-dark: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-input: #f1f5f9;
+
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --border-subtle: rgba(0, 0, 0, 0.12);
+  --border-focus: rgba(217, 119, 6, 0.6);
+  --border-cyan: rgba(14, 165, 233, 0.5);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 16px 45px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] body {
+  background-color: #f1f5f9;
+  background-image: 
+    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.06) 0%, transparent 45%);
+}
+
+/* High-Contrast Sunlight Mode for Outdoor Delivery Workers */
+[data-contrast="high"] {
+  --bg-dark: #000000 !important;
+  --bg-card: #0c0c0c !important;
+  --bg-elevated: #111111 !important;
+  --bg-input: #000000 !important;
+
+  --amber-primary: #ffff00 !important;
+  --amber-light: #ffff88 !important;
+  --emerald-primary: #00ff66 !important;
+  --cyan-primary: #00ffff !important;
+  --crimson-sos: #ff2222 !important;
+
+  --text-main: #ffffff !important;
+  --text-muted: #e2e8f0 !important;
+  --text-dim: #cbd5e1 !important;
+  --border-subtle: #ffffff !important;
+}
+
+[data-contrast="high"] button, 
+[data-contrast="high"] .card-box, 
+[data-contrast="high"] .scheme-item-card,
+[data-contrast="high"] .earnings-kpi {
+  border-width: 2px !important;
+  border-color: #ffffff !important;
+}
+
+/* Font Sizing Scaling Modes */
+html.font-scale-sm { font-size: 14px; }
+html.font-scale-md { font-size: 16px; }
+html.font-scale-lg { font-size: 18px; }
+html.font-scale-xl { font-size: 20px; }
+
+/* Web Accessibility Control Bar */
+.accessibility-bar {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: 2px solid var(--border-subtle);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 85;
+}
+
+.a11y-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.a11y-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-a11y {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.775rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: var(--transition);
+}
+
+.btn-a11y:hover, .btn-a11y.active {
+  border-color: var(--amber-primary);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--amber-light);
+}
+
+.btn-theme-toggle {
+  background: var(--bg-elevated);
+  border: 1px solid var(--amber-primary);
+  color: var(--text-main);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: var(--transition);
+}
+
+.btn-theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px rgba(245, 158, 11, 0.3);
+}
+
+.font-size-btns {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.btn-font-scale {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-font-scale:hover, .btn-font-scale.active {
+  background: var(--amber-primary);
+  color: #000;
+}
+
+/* Quick Translate Chips on Accessibility Toolbar */
+.translate-chips-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  max-width: 480px;
+  padding-bottom: 2px;
+}
+
+.translate-chip-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.65rem;
+  font-size: 0.725rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.translate-chip-btn:hover, .translate-chip-btn.active {
+  border-color: var(--cyan-primary);
+  background: rgba(6, 182, 212, 0.2);
+  color: var(--cyan-primary);
+}
+
+/* GenAI Voice Audio Player Docked Bar */
+.genai-voice-player-bar {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(99, 102, 241, 0.18));
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+}
+
+.genai-voice-player-bar.active {
+  display: flex;
+}
+
+.player-info-side {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.825rem;
+}
+
+.player-eq-bars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+
+.swave-bar {
+  width: 3.5px;
+  height: 6px;
+  background: var(--cyan-primary);
+  border-radius: 2px;
+  transition: height 0.08s ease;
+}
+
+.player-controls-side {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-player-action {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: var(--transition);
+}
+
+.btn-player-action:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-player-action.stop {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.btn-player-action.stop:hover {
+  background: var(--crimson-sos);
+  color: #fff;
+}
+
+.persona-select-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: var(--radius-full);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
