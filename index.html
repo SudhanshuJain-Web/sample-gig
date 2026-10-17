@@ -20,17 +20,54 @@
        ====================================================================== -->
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-modal">
+      <!-- Modal Language & Accessibility Control Bar -->
+      <div class="auth-a11y-bar" id="authA11yBar" role="region" aria-label="Registration Accessibility & Language Controls">
+        <div class="a11y-group">
+          <button type="button" id="authThemeToggleBtn" class="btn-theme-toggle" style="padding:0.25rem 0.65rem; font-size:0.75rem;" title="Toggle Dark/Light mode">
+            <span class="auth-theme-icon">🌙</span> <span class="auth-theme-text">Dark Mode</span>
+          </button>
+          <button type="button" id="authContrastToggleBtn" class="btn-a11y" style="padding:0.25rem 0.65rem; font-size:0.75rem;" title="Sunlight High-Contrast Mode">
+            <span>🔆</span> <span>Sunlight</span>
+          </button>
+          <div class="font-size-btns">
+            <button type="button" class="btn-font-scale btn-auth-scale" data-scale="sm" title="Small text">A-</button>
+            <button type="button" class="btn-font-scale btn-auth-scale active" data-scale="md" title="Default text">A</button>
+            <button type="button" class="btn-font-scale btn-auth-scale" data-scale="lg" title="Large text">A+</button>
+          </div>
+        </div>
+
+        <div class="a11y-group">
+          <div class="lang-picker-box" style="padding:0.2rem 0.6rem;">
+            <span style="font-size:0.8rem;">🌐</span>
+            <select id="authLangPicker" class="lang-select-input" style="font-size:0.775rem;" title="Select portal language">
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="en">English</option>
+              <option value="hinglish">Hinglish</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+              <option value="mr">मराठी (Marathi)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="gu">ગુજરાતી (Gujarati)</option>
+            </select>
+          </div>
+          <button type="button" id="authReadModalBtn" class="btn-read-page" style="padding:0.25rem 0.65rem; font-size:0.75rem;" title="Listen to login instructions aloud">
+            🔊 <span data-i18n="btnListenTrans">बोलकर सुनें</span>
+          </button>
+        </div>
+      </div>
+
       <div class="auth-hero-side">
         <div class="auth-hero-content">
           <div class="auth-badge-logo">🛡️</div>
-          <h2 class="auth-hero-title">GigSaathi AI<br><span style="color:var(--amber-primary)">गिग साथी</span></h2>
-          <p class="auth-hero-sub">The GenAI Co-pilot for Gig & Daily-Wage Workers</p>
+          <h2 class="auth-hero-title"><span data-i18n="authHeroTitle">GigSaathi AI</span><br><span style="color:var(--amber-primary)">गिग साथी</span></h2>
+          <p class="auth-hero-sub" data-i18n="authHeroSub">The GenAI Co-pilot for Gig & Daily-Wage Workers</p>
           <ul class="auth-features-list">
-            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Real Net Wage & Fuel Tracking</li>
-            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 24/7 Field Safety & One-Touch SOS</li>
-            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> e-Shram & Government Welfare Schemes</li>
-            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Plain-Language Pay Slip & Challan Decrypter</li>
-            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 1-Click WhatsApp Dispute Appeal Drafter</li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <span data-i18n="authFeature1">Real Net Wage & Fuel Tracking</span></li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <span data-i18n="authFeature2">24/7 Field Safety & One-Touch SOS</span></li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <span data-i18n="authFeature3">e-Shram & Government Welfare Schemes</span></li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <span data-i18n="authFeature4">Plain-Language Pay Slip & Challan Decrypter</span></li>
+            <li><svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> <span data-i18n="authFeature5">1-Click WhatsApp Dispute Appeal Drafter</span></li>
           </ul>
         </div>
       </div>
@@ -43,7 +80,7 @@
         </div>
 
         <div class="quick-users-label">
-          <span>⚡ Select 1-Click Registered Worker:</span>
+          <span data-i18n="selectWorkerTitle">⚡ Select 1-Click Registered Worker:</span>
           <span style="color:var(--amber-primary); font-size:0.7rem;">(10 Profiles Loaded)</span>
         </div>
 
@@ -53,20 +90,20 @@
         </div>
 
         <div class="auth-divider">
-          <span>OR SIGN IN WITH PHONE</span>
+          <span data-i18n="dividerOr">OR SIGN IN WITH PHONE</span>
         </div>
 
         <form class="custom-auth-form" id="customLoginForm">
           <div class="auth-input-group">
-            <label for="loginName">Full Name</label>
+            <label for="loginName" data-i18n="labelFullName">Full Name</label>
             <input type="text" id="loginName" class="auth-input" placeholder="e.g. Raju Kumar">
           </div>
           <div class="auth-input-group">
-            <label for="loginPhone">Mobile Number (Registered)</label>
+            <label for="loginPhone" data-i18n="labelPhone">Mobile Number (Registered)</label>
             <input type="tel" id="loginPhone" class="auth-input" placeholder="e.g. 9876543210" required>
           </div>
           <div class="auth-input-group">
-            <label for="loginRole">Primary Occupation</label>
+            <label for="loginRole" data-i18n="labelOccupation">Primary Occupation</label>
             <select id="loginRole" class="auth-input">
               <option value="Pick & Drop Partner">Pick & Drop Delivery Partner (Zomato/Swiggy/Zepto)</option>
               <option value="Auto-Rickshaw & Cab Driver">Auto-Rickshaw & Cab Driver (Uber/Ola/Rapido)</option>
@@ -74,7 +111,7 @@
               <option value="Skilled Technician">Skilled Technician (Electrician/Plumber)</option>
             </select>
           </div>
-          <button type="submit" class="btn-auth-submit">Enter AI Assistant</button>
+          <button type="submit" class="btn-auth-submit" data-i18n="btnEnter">Enter AI Assistant</button>
         </form>
       </div>
     </div>
